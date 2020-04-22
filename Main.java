@@ -26,10 +26,47 @@ public class Main extends Application {
 	// NOTE: this.getParameters().getRaw() will get these also
 	private List<String> args;
 
-	private static final int WINDOW_WIDTH = 560;
+	private static final int WINDOW_WIDTH = 650;
 	private static final int WINDOW_HEIGHT = 220;
 	private static final String APP_TITLE = "Milk Weights Program";
 
+	public void buttonsetup(String change) {
+				
+				VBox addGrid = new VBox();
+				
+				GridPane fPane = new GridPane();
+				fPane.add(new Label(change), 0, 0);
+				fPane.add(new TextField(), 1, 0);
+				
+				GridPane yPane = new GridPane();
+				yPane.add(new Label("Enter year: "), 0, 0);
+				yPane.add(new TextField(), 1, 0);
+				
+				GridPane mPane = new GridPane();
+				mPane.add(new Label("Enter month: "), 0, 0);
+				mPane.add(new TextField(), 1, 0);
+				
+				GridPane dPane = new GridPane();
+				dPane.add(new Label("Enter day: "), 0, 0);
+				dPane.add(new TextField(), 1, 0);
+				
+				GridPane wPane = new GridPane();
+				wPane.add(new Label("Enter weight(if needed): "), 0, 0);
+				wPane.add(new TextField(), 1, 0);
+				
+				addGrid.setPadding(new Insets(5, 5, 5, 5));
+				addGrid.getChildren().addAll(fPane, yPane, mPane, dPane, wPane);
+				addGrid.setAlignment(Pos.CENTER);
+				
+				Scene secondScene = new Scene(addGrid, 330, 150);
+
+				// New window (Stage)
+				Stage newWindow = new Stage();
+				newWindow.setScene(secondScene);
+				newWindow.show();
+				
+	}
+	
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		//Save args example
@@ -59,25 +96,7 @@ public class Main extends Application {
 		Button add = new Button("Add");
 		add.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent event) {
-				GridPane addGrid = new GridPane();
-				addGrid.setVgap(4);
-				addGrid.setHgap(10);
-				addGrid.setPadding(new Insets(5, 5, 5, 5));
-				addGrid.add(new Label("Add to: "), 0, 0);
-				addGrid.add(new TextField(), 1, 0);
-				addGrid.add(new Label("Enter year: "), 0, 1);
-				addGrid.add(new TextField(), 1, 1);
-				addGrid.add(new Label("Enter month: "), 2, 1);
-				addGrid.add(new TextField(), 3, 1);
-				addGrid.add(new Label("Enter day: "), 4, 1);
-				addGrid.add(new TextField(), 5, 1);
-				
-				Scene secondScene = new Scene(addGrid, 695, 65);
-
-				// New window (Stage)
-				Stage newWindow = new Stage();
-				newWindow.setScene(secondScene);
-				newWindow.show();
+				buttonsetup("Add to:");
 			}
 		});
 		
@@ -85,49 +104,14 @@ public class Main extends Application {
 		remove.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent event) {
 				GridPane removeGrid = new GridPane();
-				removeGrid.setVgap(4);
-				removeGrid.setHgap(10);
-				removeGrid.setPadding(new Insets(5, 5, 5, 5));
-				removeGrid.add(new Label("Remove: "), 0, 0);
-				removeGrid.add(new TextField(), 1, 0);
-				removeGrid.add(new Label("Enter year: "), 0, 1);
-				removeGrid.add(new TextField(), 1, 1);
-				removeGrid.add(new Label("Enter month: "), 2, 1);
-				removeGrid.add(new TextField(), 3, 1);
-				removeGrid.add(new Label("Enter day: "), 4, 1);
-				removeGrid.add(new TextField(), 5, 1);
-				
-				Scene secondScene = new Scene(removeGrid, 695, 65);
-
-				// New window (Stage)
-				Stage newWindow = new Stage();
-				newWindow.setScene(secondScene);
-				newWindow.show();
+				buttonsetup("Remove from:");
 			}
 		});
 		
 		Button edit = new Button("Edit");
 		edit.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent event) {
-				GridPane editGrid = new GridPane();
-				editGrid.setVgap(4);
-				editGrid.setHgap(10);
-				editGrid.setPadding(new Insets(5, 5, 5, 5));
-				editGrid.add(new Label("Edit: "), 0, 0);
-				editGrid.add(new TextField(), 1, 0);
-				editGrid.add(new Label("Enter year: "), 0, 1);
-				editGrid.add(new TextField(), 1, 1);
-				editGrid.add(new Label("Enter month: "), 2, 1);
-				editGrid.add(new TextField(), 3, 1);
-				editGrid.add(new Label("Enter day: "), 4, 1);
-				editGrid.add(new TextField(), 5, 1);
-				
-				Scene secondScene = new Scene(editGrid, 695, 65);
-
-				// New window (Stage)
-				Stage newWindow = new Stage();
-				newWindow.setScene(secondScene);
-				newWindow.show();
+				buttonsetup("Edit: ");
 			}
 		});
 		
