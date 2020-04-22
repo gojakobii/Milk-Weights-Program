@@ -1,39 +1,56 @@
+package application;
+
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class Farm {
+   private String farmID;
+   private Map<String, Integer> data;
+   
+   public Farm(String farmID) {
+      this.farmID = farmID;
+      this.data = new HashMap<>(); // TODO Do we want to use the built-in HashMap, or write our own implementation?
+   }
 
-   private int farmID;
-   Map<String, Integer> data;
-   
-   public Farm() {}
+   public String getFarmID() {
+      return farmID;
+   }
+
+   /**
+    * Adds a milk weight record to this farm's records.
+    */
+   public void add(String date, int milkWeight) {
+      data.put(date, milkWeight);
+   }
    
    /**
     * adds a milk weight record to this farm's records.
     */
-   private void add(String date, int milkWeight) {
+   public void edit(String date, int milkWeight) {
    
    }
    
    /**
     * adds a milk weight record to this farm's records.
     */
-   private void edit(String date, int milkWeight) {
+   public void remove(String date) {
    
    }
-   
+
    /**
-    * adds a milk weight record to this farm's records.
+    * Get the recorded milk weight for the given date from this farm's records. Returns null if there wasn't any data
+    * for this date.
     */
-   private void remove(String date) {
-   
+   public int getRecord(String date) {
+      return data.get(date);
    }
-   
+
    /**
     * Minimum by month. 
     * 
     */
-   private List<String> minByMonth(String month){
+   public List<String> minByMonth(String month){
      //parameters of list could be changed
      return null;
    }
@@ -42,7 +59,7 @@ public class Farm {
     * Minimum by year. 
     * 
     */
-   private List<String> minByYear(String year){
+   public List<String> minByYear(String year){
      //parameters of list could be changed
      return null;
    }
@@ -51,7 +68,7 @@ public class Farm {
     * Maximum by month. 
     * 
     */
-   private List<String> maxByMonth(String month){
+   public List<String> maxByMonth(String month){
      //parameters of list could be changed
      return null;
    }
@@ -60,7 +77,7 @@ public class Farm {
     * Maximum by year. 
     * 
     */
-   private List<String> maxByYear(String year){
+   public List<String> maxByYear(String year){
      //parameters of list could be changed
      return null;
    }
@@ -69,7 +86,7 @@ public class Farm {
     * Avg by month. 
     * 
     */
-   private List<String> avgByMonth(String month){
+   public List<String> avgByMonth(String month){
      //parameters of list could be changed
      return null;
    }
@@ -78,7 +95,7 @@ public class Farm {
     * Avg by year. 
     * 
     */
-   private List<String> avgByYear(String year){
+   public List<String> avgByYear(String year){
      //parameters of list could be changed
      return null;
    }
