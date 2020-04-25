@@ -8,8 +8,6 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Predicate;
 
 /**
  * Contains JUnit test methods for FileManager.
@@ -28,8 +26,8 @@ public class TestFileManager {
     @Test
     public void loadSimpleCsv() {
         String csvContents = "date,farm_id,weight\n" +
-                "2020-4-20,1,20\n" +
-                "2020-4-21,1,18";
+                "2020-4-9,1,20\n" +
+                "2020-4-10,1,18";
 
         Farm farm = fm.parse(csvContents);
         List<Farm.Details> allDetails = farm.getAllDetails();
@@ -38,8 +36,8 @@ public class TestFileManager {
         Assert.assertEquals("1", farm.getFarmIDs().get(0));
 
         Assert.assertEquals(2, farm.viewValues().size());
-        Assert.assertEquals(20, farm.getValues("2020-4-20").get(0).getMilkWeight());
-        Assert.assertEquals(18, farm.getValues("2020-4-21").get(0).getMilkWeight());
+        Assert.assertEquals(20, farm.getValues("04092020").get(0).getMilkWeight());
+        Assert.assertEquals(18, farm.getValues("04102020").get(0).getMilkWeight());
     }
 
     /**
@@ -58,8 +56,8 @@ public class TestFileManager {
         Assert.assertEquals("1", farm.getFarmIDs().get(0));
 
         Assert.assertEquals(2, farm.getAllDetails().size());
-        Assert.assertEquals(435, farm.getValues("2020-4-20").get(0).getMilkWeight());
-        Assert.assertEquals(444, farm.getValues("2020-4-21").get(0).getMilkWeight());
+        Assert.assertEquals(435, farm.getValues("04202020").get(0).getMilkWeight());
+        Assert.assertEquals(444, farm.getValues("04212020").get(0).getMilkWeight());
     }
 
     /**
@@ -102,7 +100,7 @@ public class TestFileManager {
 
         Assert.assertTrue(farm.getFarmIDs().contains("Farm 18"));
 
-        List<Farm.Details> may4Details = farm.getValues("2019-5-4");
+        List<Farm.Details> may4Details = farm.getValues("05042019");
         Assert.assertTrue(may4Details.stream().anyMatch(details ->
                 details.getFarmID() == 83 && details.getMilkWeight() == 8187));
     }

@@ -75,7 +75,7 @@ public class FileManager {
                     throw new ParsingException("Missing one or more of these columns: date, farm_id, weight");
             } else {
                 // This isn't the first line, so it will contain one data point for some farm
-                String date = columns[dateColumnIndex];
+                String unformattedDate = columns[dateColumnIndex];
                 String farmID = columns[farmIDColumnIndex];
                 String weightStr = columns[weightColumnIndex];
 
@@ -87,8 +87,19 @@ public class FileManager {
                     throw new ParsingException("Couldn't parse weight '" + weightStr + "' as an integer", ex);
                 }
 
+                // Convert date to MMDDYYYY format (right now, it's YYYY-M-D)
+                String[] dateSplit = unformattedDate.split("-");
+                String year = dateSplit[0];
+                String month = dateSplit[1];
+                String day = dateSplit[2];
+
+                if (day.length() == 1) day = "0" + day;
+                if (month.length() == 1) month = "0" + month;
+
+                String formattedDate = month + day + year;
+
                 // Add data-point for this day into the farm
-                farm.add(date, farmID, weightStr);
+                farm.add(formattedDate, farmID, weightStr);
             }
         }
 
