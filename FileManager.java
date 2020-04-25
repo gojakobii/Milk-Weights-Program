@@ -98,7 +98,7 @@ public class FileManager {
                 }
 
                 // Add data-point for this day into the farm
-                farm.add(date, weight);
+                farm.add(date, farmID, weightStr);
             }
         }
 
