@@ -7,7 +7,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 /**
  * Contains JUnit test methods for FileManager.
@@ -26,17 +28,18 @@ public class TestFileManager {
     @Test
     public void loadSimpleCsv() {
         String csvContents = "date,farm_id,weight\n" +
-                "2020-4-20,Farm 1,20\n" +
-                "2020-4-21,Farm 1,18";
+                "2020-4-20,1,20\n" +
+                "2020-4-21,1,18";
 
-        Map<String, Farm> farms = fm.parse(csvContents);
+        Farm farm = fm.parse(csvContents);
+        List<Farm.Details> allDetails = farm.getAllDetails();
 
-        Assert.assertEquals(1, farms.size());
-        Farm farm = farms.get("Farm 1");
-        Assert.assertNotNull(farm);
-        Assert.assertEquals("Farm 1", farm.getFarmID());
-        Assert.assertEquals(20, farm.getRecord("2020-4-20"));
-        Assert.assertEquals(18, farm.getRecord("2020-4-21"));
+        Assert.assertEquals(1, farm.getFarmIDs().size());
+        Assert.assertEquals("1", farm.getFarmIDs().get(0));
+
+        Assert.assertEquals(2, farm.viewValues().size());
+        Assert.assertEquals(20, farm.getValues("2020-4-20").get(0).getMilkWeight());
+        Assert.assertEquals(18, farm.getValues("2020-4-21").get(0).getMilkWeight());
     }
 
     /**
@@ -46,17 +49,17 @@ public class TestFileManager {
     @Test
     public void ignoreExtraData() {
         String csvContents = "farm_id,date,number_workers,weather,weight\n" +
-                "Farm 1,2020-4-20,14,Sunny,435\n" +
-                "Farm 1,2020-4-21,13,Cloudy,444";
+                "1,2020-4-20,14,Sunny,435\n" +
+                "1,2020-4-21,13,Cloudy,444";
 
-        Map<String, Farm> farms = fm.parse(csvContents);
+        Farm farm = fm.parse(csvContents);
 
-        Assert.assertEquals(1, farms.size());
-        Farm farm = farms.get("Farm 1");
-        Assert.assertNotNull(farm);
-        Assert.assertEquals("Farm 1", farm.getFarmID());
-        Assert.assertEquals(435, farm.getRecord("2020-4-20"));
-        Assert.assertEquals(444, farm.getRecord("2020-4-21"));
+        Assert.assertEquals(1, farm.getFarmIDs().size());
+        Assert.assertEquals("1", farm.getFarmIDs().get(0));
+
+        Assert.assertEquals(2, farm.getAllDetails().size());
+        Assert.assertEquals(435, farm.getValues("2020-4-20").get(0).getMilkWeight());
+        Assert.assertEquals(444, farm.getValues("2020-4-21").get(0).getMilkWeight());
     }
 
     /**
@@ -88,20 +91,19 @@ public class TestFileManager {
         String csvContents = "date,farm_id,weight\n" +
                 "2020-4-21,This is some random farm Id that does not conform to the 'Farm X' format,1";
 
-        Map<String, Farm> farms = fm.parse(csvContents);
-        Assert.assertEquals(1, farms.size());
+        Farm farm = fm.parse(csvContents);
+        Assert.assertEquals(1, farm.getFarmIDs().size());
     }
 
     @Test
     public void readFarmsFromDisk() throws IOException {
         // TODO Fix the Git repository structure so that the root of the repo isn't inside the application folder
-        Map<String, Farm> farms = fm.load("application/test/test_2019-5.csv");
+        Farm farm = fm.load("application/test/test_2019-5.csv");
 
-        Farm farm = farms.get("Farm 18");
-        Assert.assertEquals("Farm 18", farm.getFarmID());
-        Assert.assertEquals(2387, farm.getRecord("2019-5-1"));
-        Assert.assertEquals(2503, farm.getRecord("2019-5-2"));
-        Assert.assertEquals(2573, farm.getRecord("2019-5-30"));
-        Assert.assertEquals(2267, farm.getRecord("2019-5-31"));
+        Assert.assertTrue(farm.getFarmIDs().contains("Farm 18"));
+
+        List<Farm.Details> may4Details = farm.getValues("2019-5-4");
+        Assert.assertTrue(may4Details.stream().anyMatch(details ->
+                details.getFarmID() == 83 && details.getMilkWeight() == 8187));
     }
 }

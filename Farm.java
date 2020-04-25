@@ -13,7 +13,7 @@ public class Farm {
     /**
      * Details stores the milk weight on a farm for a specific date.
      */
-    class Details {
+    public class Details {
         private int farmID;             //Stores the farmID for this record.
         private int milkWeight;        //Stores the milkWeight associated with this farmID on a particular date.
         private int month;            //used for monthly report. Stores the month in which this record was entered.
@@ -801,5 +801,21 @@ public class Farm {
 
     public Collection<ArrayList<Details>> viewValues() {
         return data.values();
+    }
+
+    public ArrayList<Details> getAllDetails() {
+        int totalSize = 0;
+        for (ArrayList<Details> list : data.values())
+            totalSize += list.size();
+
+        ArrayList<Details> allDetails = new ArrayList<>(totalSize);
+        for (ArrayList<Details> list : data.values())
+            allDetails.addAll(list);
+
+        return allDetails;
+    }
+
+    public ArrayList<String> getFarmIDs() {
+        return farmIDs;
     }
 }

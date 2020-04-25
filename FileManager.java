@@ -11,13 +11,12 @@ import java.util.Map;
  */
 public class FileManager {
     /**
-     * Reads and parses the given CSV file to a map of farm IDs to farms.
+     * Reads the CSV file from disk, then parses its contents.
      *
      * @param filename the name of the CSV file to load
-     * @return a map containing the farms that were in the CSV. It's possible to iterate through these by using
-     * {@link Map#values()}.
+     * @return a farm object containing the data from the CSV file
      */
-    public Map<String, Farm> load(String filename) throws IOException {
+    public Farm load(String filename) throws IOException {
         FileReader fileReader = new FileReader(filename);
         BufferedReader bufferedReader = new BufferedReader(fileReader);
 
@@ -32,17 +31,18 @@ public class FileManager {
     }
 
     /**
-     * Parse the given contents from a CSV file to a map of farm IDs to farms.
+     * Parse the given contents of a CSV file. Note that this method is for when you already have the contents of the
+     * CSV file as a String. If you only have the name of the file, use {@link #load(String)}, which will read the
+     * file from disk first.
      *
-     * @param contents the contents from a CSV file
-     * @return a map containing the farms that were in the CSV. It's possible to iterate through these by using
-     * {@link Map#values()}.
+     * @param contents the contents of a CSV file.
+     * @return a farm object containing the data from the CSV file
      */
-    public Map<String, Farm> parse(String contents) {
+    public Farm parse(String contents) {
         String[] lines = contents.trim().split("\\r?\\n"); // split by newline
 
-        // Maps farmID to the corresponding farm object
-        Map<String, Farm> farms = new HashMap<>();
+        // We will store all data from the file in this Farm object
+        Farm farm = new Farm();
 
         // Index of each column in the CSV file
         // E.g. if the first column was the date, then dateColumnIndex would be set to 0
@@ -79,22 +79,12 @@ public class FileManager {
                 String farmID = columns[farmIDColumnIndex];
                 String weightStr = columns[weightColumnIndex];
 
-                // Convert weight to an int
-                // (note: because the farm ID can be any string, we don't convert it to an int)
-                int weight;
+                // Ensure that weightStr is an integer
+                // (note: because the farm ID can be any string, we don't check if it is an integer)
                 try {
-                    weight = Integer.parseInt(weightStr);
+                    Integer.parseInt(weightStr);
                 } catch (NumberFormatException ex) {
                     throw new ParsingException("Couldn't parse weight '" + weightStr + "' as an integer", ex);
-                }
-
-                // Find or create the farm object
-                Farm farm;
-                if (farms.containsKey(farmID)) {
-                    farm = farms.get(farmID);
-                } else {
-                    farm = new Farm(farmID);
-                    farms.put(farmID, farm);
                 }
 
                 // Add data-point for this day into the farm
@@ -102,8 +92,8 @@ public class FileManager {
             }
         }
 
-        // Return the farms map
-        return farms;
+        // Return the farm object
+        return farm;
     }
 
     public static class ParsingException extends RuntimeException {
