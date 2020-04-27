@@ -15,7 +15,6 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
@@ -30,7 +29,8 @@ public class Main extends Application {
 	private static final int WINDOW_HEIGHT = 220;
 	private static final String APP_TITLE = "Milk Weights Program";
 
-	public void addEditSetup(String change) {
+	public void addEditSetup(String change, TextArea fileOutput) {
+		Stage newWindow = new Stage();
 		GridPane gPane = new GridPane();
 
 		gPane.add(new Label("Enter year: "), 0, 0);
@@ -49,15 +49,26 @@ public class Main extends Application {
 		gPane.setPadding(new Insets(5, 5, 5, 5));
 
 		Scene secondScene = new Scene(gPane, 330, 155);
+		
+		Button submit = new Button("Submit!");
+		submit.setOnAction(new EventHandler<ActionEvent>() {
+			public void handle(ActionEvent event) {
+				// VERIFY DATA IS ENTERED CORRECTLY BEFORE PROCEEDING
+				// (I.E FILE EXISTS, FILE PARSES CORRECTLY, VALID ENTRIES IN TEXT FIELDS)
+				newWindow.hide();
+				fileOutput.setText(change); //CHANGE WITH ADD/EDIT
+			}
+		});
+		gPane.add(submit, 0, 5);
 
 		// New window (Stage)
-		Stage newWindow = new Stage();
 		newWindow.setTitle(change);
 		newWindow.setScene(secondScene);
 		newWindow.show();
 	}
 	
-	public void removeSetup(String change) {
+	public void removeSetup(String change, TextArea fileOutput) {
+		Stage newWindow = new Stage();
 		GridPane gPane = new GridPane();
 
 		gPane.add(new Label("Enter year: "), 0, 0);
@@ -75,8 +86,18 @@ public class Main extends Application {
 
 		Scene secondScene = new Scene(gPane, 330, 125);
 
+		Button submit = new Button("Submit!");
+		submit.setOnAction(new EventHandler<ActionEvent>() {
+			public void handle(ActionEvent event) {
+				// VERIFY DATA IS ENTERED CORRECTLY BEFORE PROCEEDING
+				// (I.E FILE EXISTS, FILE PARSES CORRECTLY, VALID ENTRIES IN TEXT FIELDS)
+				newWindow.hide();
+				fileOutput.setText(change); //CHANGE WITH REMOVE
+			}
+		});
+		gPane.add(submit, 0, 5);
+		
 		// New window (Stage)
-		Stage newWindow = new Stage();
 		newWindow.setTitle(change);
 		newWindow.setScene(secondScene);
 		newWindow.show();
@@ -90,6 +111,11 @@ public class Main extends Application {
 		//Creating TextField for file input
 		TextField fileInput = new TextField();
 		fileInput.setPromptText("Input a valid text file .csv");
+		
+		//Creating TextArea for reports and statistics
+		TextArea fileOutput = new TextArea();
+		fileOutput.setEditable(false);
+		fileOutput.setPromptText("Display for selected report type and statistics");
 
 		//Creating ComboBox for report type selection
 		ComboBox<String> reportComboBox = new ComboBox<String>();
@@ -100,6 +126,7 @@ public class Main extends Application {
 				"Data Range Report");
 		reportComboBox.setValue("Select a report");
 		reportComboBox.setOnAction((e) -> {
+			Stage newWindow = new Stage();
 			GridPane gPane = new GridPane();
 			String select = reportComboBox.getSelectionModel().getSelectedItem();
 			
@@ -132,21 +159,26 @@ public class Main extends Application {
 				gPane.add(new TextField(), 1, 4);
 			}
 			
+			//Creating Button for submission of inserted text
+			Button submit = new Button("Submit!");
+			submit.setOnAction(new EventHandler<ActionEvent>() {
+				public void handle(ActionEvent event) {
+					// VERIFY DATA IS ENTERED CORRECTLY BEFORE PROCEEDING
+					// (I.E FILE EXISTS, FILE PARSES CORRECTLY, VALID ENTRIES IN TEXT FIELDS)
+					newWindow.hide();
+					fileOutput.setText(select); //CHANGE WITH FARM REPORT OUTPUT
+				}
+			});
+			gPane.add(submit, 0, 5);
 			gPane.setVgap(4);
 			gPane.setHgap(10);
 			gPane.setPadding(new Insets(5, 5, 5, 5));
-			Scene secondScene = new Scene(gPane, 330, 200);
 			
-			Stage newWindow = new Stage();
+			Scene secondScene = new Scene(gPane, 330, 200);
 			newWindow.setTitle(select);
 			newWindow.setScene(secondScene);
 			newWindow.show();
-		    System.out.println(reportComboBox.getSelectionModel().getSelectedItem());
 		});
-
-		TextArea fileOutput = new TextArea();
-		fileOutput.setEditable(false);
-		fileOutput.setPromptText("Display for selected report type and statistics");
 
 		//Creating VBox layout manager for buttons
 		VBox vBox = new VBox();
@@ -155,21 +187,21 @@ public class Main extends Application {
 		Button add = new Button("Add");
 		add.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent event) {
-				addEditSetup("Add");
+				addEditSetup("Add", fileOutput);
 			}
 		});
 
 		Button remove = new Button("Remove");
 		remove.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent event) {
-				removeSetup("Remove");
+				removeSetup("Remove", fileOutput);
 			}
 		});
 
 		Button edit = new Button("Edit");
 		edit.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent event) {
-				addEditSetup("Edit");
+				addEditSetup("Edit", fileOutput);
 			}
 		});
 
@@ -184,6 +216,8 @@ public class Main extends Application {
 				statMonth.setOnAction(new EventHandler<ActionEvent>() {
 					public void handle(ActionEvent event) {
 						newWindow.hide();
+						Stage newWindow2 = new Stage();
+						
 						GridPane monthGrid = new GridPane();
 
 						monthGrid.setVgap(4);
@@ -195,13 +229,23 @@ public class Main extends Application {
 						monthGrid.add(new Label("Enter year: "), 1, 1);
 						monthGrid.add(new TextField(), 1, 2);
 
-						Scene secondScene = new Scene(monthGrid, 300, 75);
+						Scene secondScene = new Scene(monthGrid, 300, 100);
 
+						Button submit = new Button("Submit!");
+						submit.setOnAction(new EventHandler<ActionEvent>() {
+							public void handle(ActionEvent event) {
+								// VERIFY DATA IS ENTERED CORRECTLY BEFORE PROCEEDING
+								// (I.E FILE EXISTS, FILE PARSES CORRECTLY, VALID ENTRIES IN TEXT FIELDS)
+								newWindow2.hide();
+								fileOutput.setText("DISPLAY MONTH STATS"); //CHANGE WITH ACTUAL MONTHLY STATS CODE
+							}
+						});
+						monthGrid.add(submit, 0, 5);
+						
 						// New window (Stage)
-						Stage newWindow = new Stage();
-						newWindow.setTitle("Display");
-						newWindow.setScene(secondScene);
-						newWindow.show();
+						newWindow2.setTitle("Display");
+						newWindow2.setScene(secondScene);
+						newWindow2.show();
 					}
 				});
 
@@ -209,6 +253,7 @@ public class Main extends Application {
 				statFarm.setOnAction(new EventHandler<ActionEvent>() {
 					public void handle(ActionEvent event) {
 						newWindow.hide();
+						Stage newWindow2 = new Stage();
 						GridPane farmGrid = new GridPane();
 
 						farmGrid.setVgap(4);
@@ -220,12 +265,22 @@ public class Main extends Application {
 						farmGrid.add(new Label("Enter year: "), 1, 1);
 						farmGrid.add(new TextField(), 1, 2);
 
-						Scene secondScene = new Scene(farmGrid, 300, 75);
+						Scene secondScene = new Scene(farmGrid, 300, 100);
 
+						Button submit = new Button("Submit!");
+						submit.setOnAction(new EventHandler<ActionEvent>() {
+							public void handle(ActionEvent event) {
+								// VERIFY DATA IS ENTERED CORRECTLY BEFORE PROCEEDING
+								// (I.E FILE EXISTS, FILE PARSES CORRECTLY, VALID ENTRIES IN TEXT FIELDS)
+								newWindow2.hide();
+								fileOutput.setText("DISPLAY FARM STATS"); //CHANGE WITH ACTUAL FARM STATS CODE
+							}
+						});
+						farmGrid.add(submit, 0, 5);
+						
 						// New window (Stage)
-						Stage newWindow = new Stage();
-						newWindow.setScene(secondScene);
-						newWindow.show();
+						newWindow2.setScene(secondScene);
+						newWindow2.show();
 					}
 				});
 				statFarm.setTextAlignment(TextAlignment.CENTER);
@@ -234,6 +289,7 @@ public class Main extends Application {
 				farmShares.setOnAction(new EventHandler<ActionEvent>() {
 					public void handle(ActionEvent event) {
 						newWindow.hide();
+						Stage newWindow2 = new Stage();
 						GridPane shareGrid = new GridPane();
 
 						shareGrid.setVgap(4);
@@ -245,12 +301,22 @@ public class Main extends Application {
 						shareGrid.add(new Label("Enter year: "), 1, 1);
 						shareGrid.add(new TextField(), 1, 2);
 
-						Scene secondScene = new Scene(shareGrid, 300, 75);
-
+						Scene secondScene = new Scene(shareGrid, 300, 100);
+						
+						Button submit = new Button("Submit!");
+						submit.setOnAction(new EventHandler<ActionEvent>() {
+							public void handle(ActionEvent event) {
+								// VERIFY DATA IS ENTERED CORRECTLY BEFORE PROCEEDING
+								// (I.E FILE EXISTS, FILE PARSES CORRECTLY, VALID ENTRIES IN TEXT FIELDS)
+								newWindow2.hide();
+								fileOutput.setText("DISPLAY FARM SHARES"); //CHANGE WITH ACTUAL FARM SHARES CODE
+							}
+						});
+						shareGrid.add(submit, 0, 5);
+						
 						// New window (Stage)
-						Stage newWindow = new Stage();
-						newWindow.setScene(secondScene);
-						newWindow.show();
+						newWindow2.setScene(secondScene);
+						newWindow2.show();
 					}
 				});
 				farmShares.setTextAlignment(TextAlignment.CENTER);
@@ -259,9 +325,8 @@ public class Main extends Application {
 				displayButtons.getChildren().addAll(statMonth, statFarm, farmShares);
 				displayButtons.setAlignment(Pos.CENTER);
 				Scene secondScene = new Scene(displayButtons, 200, 85);
-
+				
 				// New window (Stage)
-
 				newWindow.setScene(secondScene);
 				newWindow.show();
 			}
