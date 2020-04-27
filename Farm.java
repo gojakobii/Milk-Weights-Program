@@ -1,5 +1,3 @@
-package application;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -120,23 +118,21 @@ public class Farm {
      * @param farmID
      * @param milkWeight
      * @return ArrayList<details> - updated values
+     * @throws Exception 
      */
-    public ArrayList<Details> add(String date, String farmID, String milkWeight) {
+    public ArrayList<Details> add(String date, String farmID, String milkWeight) throws Exception {
 
         ArrayList<Details> list = new ArrayList<>();
         try {
             // Verify that the given parameters are valid
             if (date.isEmpty()) {
-                list.add(new Details("-1", "-1"));
-                return list;
+                throw new Exception("Date is empty");
             } else if (farmID.isEmpty())  //check if farmID is empty
             {
-                list.add(new Details("-2", "-2"));
-                return list;
+              throw new Exception("FarmID is empty");
             } else if (milkWeight.isEmpty())  //check if milkWeight is empty
             {
-                list.add(new Details("-3", "-3"));
-                return list;
+              throw new Exception("Milk Weight is empty");
             } else {
                 //check if milkWeight is negative.
                 if (Integer.parseInt(milkWeight) >= 0 && Integer.parseInt(farmID) > 0) {
@@ -169,13 +165,11 @@ public class Farm {
                         return null;   //if returnedList is null, obj is added.
                     }
                 } else {
-                    list.add(new Details("-4", "-4"));   //farmID and/or milkWeight is negative
-                    return list;
+                    throw new Exception("farmID or milk weight is negative");
                 }
             }
         } catch (NullPointerException e) {
-            list.add(new Details("-5", "-5"));  //one of parameters is null
-            return list;
+            throw new Exception("One of the parameters are null");
         }
 
     }
@@ -206,18 +200,16 @@ public class Farm {
     public ArrayList<Details> edit(String date, String farmID, String milkWeight, int flag, String newDate, String newFarmID, String newMilkWeight) throws Exception {
         ArrayList<Details> list = new ArrayList<Details>();
         try {
-            if (date.isEmpty() == true) {
-                list.add(new Details("-1", "-1")); //check if date is empty
-                return list;
-            } else if (farmID.isEmpty() == true) //check if farmID is empty
-            {
-                list.add(new Details("-2", "-2"));
-                return list;
-            } else if (milkWeight.isEmpty() == true) //check if milkWeight is empty
-            {
-                list.add(new Details("-3", "-3"));
-                return list;
-            } else {
+          // Verify that the given parameters are valid
+            if (date.isEmpty()) {
+              throw new Exception("Date is empty");
+          } else if (farmID.isEmpty())  //check if farmID is empty
+          {
+            throw new Exception("FarmID is empty");
+          } else if (milkWeight.isEmpty())  //check if milkWeight is empty
+          {
+            throw new Exception("Milk Weight is empty");
+          } else {
                 //check if milkWeight is negative.
                 if (Integer.parseInt(milkWeight) >= 0 && Integer.parseInt(farmID) > 0) {
                     switch (flag) {
@@ -283,41 +275,36 @@ public class Farm {
                             return data.get(date);
                     }                                      //end of switch
 
-                    throw new Exception("check not marked");
+                    throw new Exception("What to be edited is not marked");
                 } else {
-                    list.add(new Details("-4", "-4"));   //farmID and/or milkWeight is negative
-                    return list;
+                    throw new Exception("FarmID or milk Weight is negative");
                 }
             }
         } catch (NullPointerException e) {
-            list.add(new Details("-5", "-5")); //one of parameters is null
-            return list;
+            throw new Exception("One or more of the parameters are null");
         } catch (NumberFormatException e) {
-            list.add(new Details("-6", "-6"));    //Integer passed as String or vice versa.
-            return list;
+            throw new Exception("Integer passed as String or vice versa");
         }
     }
 
     /**
      * removes a milk weight record to this farm's records.
+     * @throws Exception 
      */
-    public ArrayList<Details> remove(String date, String farmID, String milkWeight) {
+    public ArrayList<Details> remove(String date, String farmID, String milkWeight) throws Exception {
 
         ArrayList<Details> list = new ArrayList<Details>();
         try {
-            if (date.isEmpty() == true)  //check if date is empty
-            {
-                list.add(new Details("-1", "-1"));
-                return list;
-            } else if (farmID.isEmpty() == true)  //check if farmID is empty
-            {
-                list.add(new Details("-2", "-2"));
-                return list;
-            } else if (milkWeight.isEmpty() == true)  //check if milkWeight is empty
-            {
-                list.add(new Details("-3", "-3"));
-                return list;
-            } else {
+          // Verify that the given parameters are valid
+              if (date.isEmpty()) {
+                throw new Exception("Date is empty");
+            } else if (farmID.isEmpty())  //check if farmID is empty
+              {
+                throw new Exception("FarmID is empty");
+            } else if (milkWeight.isEmpty())  //check if milkWeight is empty
+              {
+                throw new Exception("Milk Weight is empty");
+        } else {
                 //check if milkWeight is negative.
                 if (Integer.parseInt(milkWeight) >= 0 && Integer.parseInt(farmID) > 0) {
                     list = data.get(date);
@@ -335,11 +322,9 @@ public class Farm {
                 }
             }
         } catch (NullPointerException e) {
-            list.add(new Details("-5", "-5"));  //one of parameters is null
-            return list;
+            throw new Exception("One or more of the parameters are null");
         } catch (NumberFormatException e) {   //Parameters not passed properly
-            list.add(new Details("6", "-6"));
-            return list;
+            throw new Exception("Parameters passed as String instead of int or vice versa");
         }
     }
 
@@ -351,19 +336,18 @@ public class Farm {
      * @param month
      * @param year
      * @return
+     * @throws Exception 
      */
-    public ArrayList<Details> monthlyReport(String month, String year) {
+    public ArrayList<Details> monthlyReport(String month, String year) throws Exception {
         ArrayList<Details> list = new ArrayList<Details>();
         ArrayList<Details> temp = new ArrayList<Details>();
         try {
             if (month.isEmpty() == true)  //check if date is empty
             {
-                list.add(new Details("-1", "-1"));
-                return list;
+              throw new Exception("Month is emtpy");
             } else if (year.isEmpty() == true)  //check if year is empty
             {
-                list.add(new Details("-2", "-2"));
-                return list;
+              throw new Exception("Year is empty");
             } else {
                 int numberOfDays = getNumberOfDaysInMonth(month, year);  //get number of days in year.
                 for (int i = 1; i <= numberOfDays; i++)  //format list in MMDDYYYY format.
@@ -425,8 +409,7 @@ public class Farm {
                 return list;
             }
         } catch (NullPointerException e) {
-            list.add(new Details("-5", "-5"));  //one of parameters is null
-            return list;
+            throw new Exception("One or more of the parameters are null");
         }
 
     }
@@ -519,19 +502,18 @@ public class Farm {
      * @param farmID
      * @param year
      * @return ArrayList<details>
+     * @throws Exception 
      */
-    public ArrayList<Details> farmReport(String farmID, String year) {
+    public ArrayList<Details> farmReport(String farmID, String year) throws Exception {
         ArrayList<Details> list = new ArrayList<Details>();
         ArrayList<Details> temp = new ArrayList<Details>();
         try {
             if (farmID.isEmpty() == true)  //check if date is empty
             {
-                list.add(new Details("-1", "-1"));
-                return list;
+              throw new Exception("FarmID is empty");
             } else if (year.isEmpty() == true)  //check if year is empty
             {
-                list.add(new Details("-2", "-2"));
-                return list;
+              throw new Exception("Year is empty");
             } else {
                 int month = 1;              //variable to count month of year
                 while (month <= 12) {        //loop through all 12 months
@@ -602,8 +584,7 @@ public class Farm {
                 return list;
             }
         } catch (NullPointerException e) {
-            list.add(new Details("-5", "-5"));
-            return list;
+            throw new Exception("One or more of the parameters are null");
         }
     }
 
@@ -613,16 +594,16 @@ public class Farm {
      *
      * @param year
      * @return
+     * @throws Exception 
      */
 
-    public ArrayList<Details> annualReport(String year) {
+    public ArrayList<Details> annualReport(String year) throws Exception {
         ArrayList<Details> list = new ArrayList<Details>();
         ArrayList<Details> temp = new ArrayList<Details>();
         try {
             if (year.isEmpty() == true)  //check if year is empty
             {
-                list.add(new Details("-1", "-1"));
-                return list;
+              throw new Exception("Year is empty");
             } else {
                 for (int f = 0; f < farmIDs.size(); f++) {
                     String farmID = farmIDs.get(f);
@@ -696,8 +677,7 @@ public class Farm {
                 return list;
             }
         } catch (NullPointerException e) {
-            list.add(new Details("-5", "-5"));
-            return list;
+            throw new Exception("One or more of the parameters are null");
         }
     }
 
@@ -708,21 +688,38 @@ public class Farm {
      *
      * @param year
      * @return
+     * @throws Exception 
      */
 
-    public ArrayList<Details> dateRange(String year, String Month, String day, String endMonth, String endDay) {
+    public ArrayList<Details> dateRange(String year, String startMonth, String day, String endMonth, String endDay) throws Exception {
         ArrayList<Details> list = new ArrayList<Details>();
         ArrayList<Details> temp = new ArrayList<Details>();
 
         try {
             if (year.isEmpty() == true)  //check if year is empty
+              {
+                throw new Exception("Year is empty");
+              } 
+            else if(startMonth.isEmpty() == true) //check if start month is empty
+              {
+                throw new Exception("Start month is empty");
+              }
+            else if(day.isEmpty() == true)
             {
-                list.add(new Details("-1", "-1"));
-                return list;
-            } else {
+              throw new Exception("Start day is empty");
+            }
+            else if(endMonth.isEmpty() == true)
+            {
+              throw new Exception("End month is empty");
+            }
+            else if(endDay.isEmpty() == true)
+            {
+              throw new Exception("End day is empty");
+            }               
+            else {
                 for (int f = 0; f < farmIDs.size(); f++) {
                     String farmID = farmIDs.get(f);
-                    int month = Integer.parseInt(Month);
+                    int month = Integer.parseInt(startMonth);
                     while (month <= Integer.parseInt(endMonth)) {
                         int numberOfDays = getNumberOfDaysInMonth(Integer.toString(month), year);
                         if (month == Integer.parseInt(endMonth))
@@ -794,8 +791,7 @@ public class Farm {
                 return list;
             }
         } catch (NullPointerException e) {
-            list.add(new Details("-5", "-5"));
-            return list;
+            throw new Exception("One or more of the parameters are null");    
         }
     }
 
