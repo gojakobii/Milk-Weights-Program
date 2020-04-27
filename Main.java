@@ -30,43 +30,58 @@ public class Main extends Application {
 	private static final int WINDOW_HEIGHT = 220;
 	private static final String APP_TITLE = "Milk Weights Program";
 
-	public void buttonsetup(String change) {
-				
-				VBox addGrid = new VBox();
-				
-				GridPane fPane = new GridPane();
-				fPane.add(new Label(change), 0, 0);
-				fPane.add(new TextField(), 1, 0);
-				
-				GridPane yPane = new GridPane();
-				yPane.add(new Label("Enter year: "), 0, 0);
-				yPane.add(new TextField(), 1, 0);
-				
-				GridPane mPane = new GridPane();
-				mPane.add(new Label("Enter month: "), 0, 0);
-				mPane.add(new TextField(), 1, 0);
-				
-				GridPane dPane = new GridPane();
-				dPane.add(new Label("Enter day: "), 0, 0);
-				dPane.add(new TextField(), 1, 0);
-				
-				GridPane wPane = new GridPane();
-				wPane.add(new Label("Enter weight(if needed): "), 0, 0);
-				wPane.add(new TextField(), 1, 0);
-				
-				addGrid.setPadding(new Insets(5, 5, 5, 5));
-				addGrid.getChildren().addAll(fPane, yPane, mPane, dPane, wPane);
-				addGrid.setAlignment(Pos.CENTER);
-				
-				Scene secondScene = new Scene(addGrid, 330, 150);
+	public void addEditSetup(String change) {
+		GridPane gPane = new GridPane();
 
-				// New window (Stage)
-				Stage newWindow = new Stage();
-				newWindow.setScene(secondScene);
-				newWindow.show();
-				
+		gPane.add(new Label("Enter year: "), 0, 0);
+		gPane.add(new TextField(), 1, 0);
+		gPane.add(new Label("Enter month: "), 0, 1);
+		gPane.add(new TextField(), 1, 1);
+		gPane.add(new Label("Enter day: "), 0, 2);
+		gPane.add(new TextField(), 1, 2);
+		gPane.add(new Label("Enter farm: "), 0, 3);
+		gPane.add(new TextField(), 1, 3);
+		gPane.add(new Label("Enter weight: "), 0, 4);
+		gPane.add(new TextField(), 1, 4);
+
+		gPane.setVgap(4);
+		gPane.setHgap(10);
+		gPane.setPadding(new Insets(5, 5, 5, 5));
+
+		Scene secondScene = new Scene(gPane, 330, 155);
+
+		// New window (Stage)
+		Stage newWindow = new Stage();
+		newWindow.setTitle(change);
+		newWindow.setScene(secondScene);
+		newWindow.show();
 	}
 	
+	public void removeSetup(String change) {
+		GridPane gPane = new GridPane();
+
+		gPane.add(new Label("Enter year: "), 0, 0);
+		gPane.add(new TextField(), 1, 0);
+		gPane.add(new Label("Enter month: "), 0, 1);
+		gPane.add(new TextField(), 1, 1);
+		gPane.add(new Label("Enter day: "), 0, 2);
+		gPane.add(new TextField(), 1, 2);
+		gPane.add(new Label("Enter farm: "), 0, 3);
+		gPane.add(new TextField(), 1, 3);
+
+		gPane.setVgap(4);
+		gPane.setHgap(10);
+		gPane.setPadding(new Insets(5, 5, 5, 5));
+
+		Scene secondScene = new Scene(gPane, 330, 125);
+
+		// New window (Stage)
+		Stage newWindow = new Stage();
+		newWindow.setTitle(change);
+		newWindow.setScene(secondScene);
+		newWindow.show();
+	}
+
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		//Save args example
@@ -84,6 +99,50 @@ public class Main extends Application {
 				"Monthly Report",
 				"Data Range Report");
 		reportComboBox.setValue("Select a report");
+		reportComboBox.setOnAction((e) -> {
+			GridPane gPane = new GridPane();
+			String select = reportComboBox.getSelectionModel().getSelectedItem();
+			
+			if (select.equals("Farm Report")) {
+				gPane.add(new Label("Enter farm: "), 0, 0);
+				gPane.add(new TextField(), 1, 0);
+				gPane.add(new Label("Enter year: "), 0, 1);
+				gPane.add(new TextField(), 1, 1);
+			}
+			else if (select.equals("Annual Report")) {
+				gPane.add(new Label("Enter year: "), 0, 0);
+				gPane.add(new TextField(), 1, 0);
+			}
+			else if (select.equals("Monthly Report")) {
+				gPane.add(new Label("Enter month: "), 0, 0);
+				gPane.add(new TextField(), 1, 0);
+				gPane.add(new Label("Enter year: "), 0, 1);
+				gPane.add(new TextField(), 1, 1);
+			}
+			else {
+				gPane.add(new Label("Enter year: "), 0, 0);
+				gPane.add(new TextField(), 1, 0);
+				gPane.add(new Label("Enter start month: "), 0, 1);
+				gPane.add(new TextField(), 1, 1);
+				gPane.add(new Label("Enter start day: "), 0, 2);
+				gPane.add(new TextField(), 1, 2);
+				gPane.add(new Label("Enter end month: "), 0, 3);
+				gPane.add(new TextField(), 1, 3);
+				gPane.add(new Label("Enter end day: "), 0, 4);
+				gPane.add(new TextField(), 1, 4);
+			}
+			
+			gPane.setVgap(4);
+			gPane.setHgap(10);
+			gPane.setPadding(new Insets(5, 5, 5, 5));
+			Scene secondScene = new Scene(gPane, 330, 200);
+			
+			Stage newWindow = new Stage();
+			newWindow.setTitle(select);
+			newWindow.setScene(secondScene);
+			newWindow.show();
+		    System.out.println(reportComboBox.getSelectionModel().getSelectedItem());
+		});
 
 		TextArea fileOutput = new TextArea();
 		fileOutput.setEditable(false);
@@ -96,38 +155,37 @@ public class Main extends Application {
 		Button add = new Button("Add");
 		add.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent event) {
-				buttonsetup("Add to:");
+				addEditSetup("Add");
 			}
 		});
-		
+
 		Button remove = new Button("Remove");
 		remove.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent event) {
-				GridPane removeGrid = new GridPane();
-				buttonsetup("Remove from:");
+				removeSetup("Remove");
 			}
 		});
-		
+
 		Button edit = new Button("Edit");
 		edit.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent event) {
-				buttonsetup("Edit: ");
+				addEditSetup("Edit");
 			}
 		});
-		
+
 		Button display = new Button("Display");
 		display.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent event) {
 				VBox displayButtons = new VBox();
 				Stage newWindow = new Stage();
-				
+
 				Button statMonth = new Button("Display statistics by month");
 				statMonth.setTextAlignment(TextAlignment.CENTER);
 				statMonth.setOnAction(new EventHandler<ActionEvent>() {
 					public void handle(ActionEvent event) {
 						newWindow.hide();
 						GridPane monthGrid = new GridPane();
-						
+
 						monthGrid.setVgap(4);
 						monthGrid.setHgap(10);
 						monthGrid.setPadding(new Insets(5, 5, 5, 5));
@@ -136,22 +194,23 @@ public class Main extends Application {
 						monthGrid.add(new TextField(), 0, 2);
 						monthGrid.add(new Label("Enter year: "), 1, 1);
 						monthGrid.add(new TextField(), 1, 2);
-						
+
 						Scene secondScene = new Scene(monthGrid, 300, 75);
 
 						// New window (Stage)
 						Stage newWindow = new Stage();
+						newWindow.setTitle("Display");
 						newWindow.setScene(secondScene);
 						newWindow.show();
 					}
 				});
-				
+
 				Button statFarm = new Button("Display statistics by farm");
 				statFarm.setOnAction(new EventHandler<ActionEvent>() {
 					public void handle(ActionEvent event) {
 						newWindow.hide();
 						GridPane farmGrid = new GridPane();
-						
+
 						farmGrid.setVgap(4);
 						farmGrid.setHgap(10);
 						farmGrid.setPadding(new Insets(5, 5, 5, 5));
@@ -160,7 +219,7 @@ public class Main extends Application {
 						farmGrid.add(new TextField(), 0, 2);
 						farmGrid.add(new Label("Enter year: "), 1, 1);
 						farmGrid.add(new TextField(), 1, 2);
-						
+
 						Scene secondScene = new Scene(farmGrid, 300, 75);
 
 						// New window (Stage)
@@ -170,13 +229,13 @@ public class Main extends Application {
 					}
 				});
 				statFarm.setTextAlignment(TextAlignment.CENTER);
-				
+
 				Button farmShares = new Button("Display farm shares");
 				farmShares.setOnAction(new EventHandler<ActionEvent>() {
 					public void handle(ActionEvent event) {
 						newWindow.hide();
 						GridPane shareGrid = new GridPane();
-						
+
 						shareGrid.setVgap(4);
 						shareGrid.setHgap(10);
 						shareGrid.setPadding(new Insets(5, 5, 5, 5));
@@ -185,7 +244,7 @@ public class Main extends Application {
 						shareGrid.add(new TextField(), 0, 2);
 						shareGrid.add(new Label("Enter year: "), 1, 1);
 						shareGrid.add(new TextField(), 1, 2);
-						
+
 						Scene secondScene = new Scene(shareGrid, 300, 75);
 
 						// New window (Stage)
@@ -195,19 +254,19 @@ public class Main extends Application {
 					}
 				});
 				farmShares.setTextAlignment(TextAlignment.CENTER);
-				
+
 				displayButtons.setPadding(new Insets(5, 5, 5, 5));
 				displayButtons.getChildren().addAll(statMonth, statFarm, farmShares);
 				displayButtons.setAlignment(Pos.CENTER);
 				Scene secondScene = new Scene(displayButtons, 200, 85);
 
 				// New window (Stage)
-				
+
 				newWindow.setScene(secondScene);
 				newWindow.show();
 			}
 		});
-		
+
 		display.getOnMouseClicked();
 		vBox.getChildren().addAll(add, remove, edit, display);
 
