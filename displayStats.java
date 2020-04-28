@@ -5,6 +5,11 @@ public class displayStats {
   private final static String[] MONTHS_OF_YEAR = {"January", "February", "March", "April", "May",  //Stores month of years as numbers
       "June", "July", "August", "September", "October", "November", "December"};
   
+  Farm farm;
+  public displayStats(Farm farm) {
+    this.farm = farm;
+  }
+  
   /**
    * returns total and percent total of each month for FarmReport as a 2D matrix with 1st row as total
    * @param farmID
@@ -12,8 +17,7 @@ public class displayStats {
    * @return
    * @throws Exception 
    */
-  public String[][] farmReportResult(String farmID, String year) throws Exception{
-    Farm farm = new Farm();
+  public String[][] farmReportResult(String farmID, String year) throws Exception{    
     ArrayList<Farm.Details> list = farm.farmReport(farmID, year);
     String matrix[][] = new String[list.size() + 1][];
     int total = 0;
@@ -46,8 +50,7 @@ public class displayStats {
    * @return
    * @throws Exception 
    */
-  public String[][] annualReportResult(String year) throws Exception{
-    Farm farm = new Farm();
+  public String[][] annualReportResult(String year) throws Exception{    
     ArrayList<Farm.Details> list = farm.annualReport(year);
     String matrix[][] = new String[list.size() + 1][];
     int total = 0;
@@ -62,7 +65,7 @@ public class displayStats {
         }
         matrix[0][1] = Integer.toString(total);
       }
-      matrix[i][0] = Integer.toString(list.get(i-1).getFarmID());
+      matrix[i][0] = list.get(i-1).getFarmID();
       matrix[i][1] = Integer.toString((list.get(i-1).getMilkWeight()) / total * 100) + "%";
     }
     
@@ -92,7 +95,7 @@ public class displayStats {
         }
         matrix[0][1] = Integer.toString(total);
       }
-      matrix[i][0] = Integer.toString(list.get(i-1).getFarmID());
+      matrix[i][0] = list.get(i-1).getFarmID();
       matrix[i][1] = Integer.toString((list.get(i-1).getMilkWeight()) / total * 100) + "%";
     }
     
@@ -122,7 +125,7 @@ public class displayStats {
         }
         matrix[0][1] = Integer.toString(total);
       }      
-      matrix[i][0] = Integer.toString(list.get(i-1).getFarmID());      
+      matrix[i][0] = list.get(i-1).getFarmID();      
       matrix[i][1] = Integer.toString((list.get(i-1).getMilkWeight()) / total * 100) + "%";
     }
     

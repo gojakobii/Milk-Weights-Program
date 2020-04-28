@@ -12,7 +12,7 @@ public class Farm {
      * Details stores the milk weight on a farm for a specific date.
      */
     public class Details {
-        private int farmID;             //Stores the farmID for this record.
+        private String farmID;             //Stores the farmID for this record.
         private int milkWeight;        //Stores the milkWeight associated with this farmID on a particular date.
         private int month;            //used for monthly report. Stores the month in which this record was entered.
 
@@ -21,26 +21,26 @@ public class Farm {
 
         //constructor
         public Details(String farmID, String milkWeight, String month) {
-            this.farmID = Integer.parseInt(farmID);
+            this.farmID = farmID;
             this.milkWeight = Integer.parseInt(milkWeight);
             this.month = Integer.parseInt(MONTHS_OF_YEAR[Integer.parseInt(month) - 1]);
         }
 
         //constructor
         public Details(String farmID, String milkWeight) {
-            this.farmID = Integer.parseInt(farmID);
+            this.farmID = farmID;
             this.milkWeight = Integer.parseInt(milkWeight);
             this.month = -1;
         }
 
         //setter function for farmID
         public void setFarmID(String farmID) {
-            this.farmID = Integer.parseInt(farmID);
+            this.farmID = farmID;
         }
 
         //setter function for milkWeight
         public void setMilkWeight(String milkWeight) {
-            this.farmID = Integer.parseInt(milkWeight);
+            this.milkWeight = Integer.parseInt(milkWeight);
         }
 
         //setter function for milkWeight
@@ -49,7 +49,7 @@ public class Farm {
         }
 
         //getter function for farmID
-        public int getFarmID() {
+        public String getFarmID() {
             return farmID;
         }
 
@@ -122,7 +122,7 @@ public class Farm {
      */
     public ArrayList<Details> add(String date, String farmID, String milkWeight) throws Exception {
 
-        ArrayList<Details> list = new ArrayList<>();
+        ArrayList<Details> list = new ArrayList<>();        
         try {
             // Verify that the given parameters are valid
             if (date.isEmpty()) {
@@ -133,9 +133,9 @@ public class Farm {
             } else if (milkWeight.isEmpty())  //check if milkWeight is empty
             {
               throw new Exception("Milk Weight is empty");
-            } else {
+            } else {                
                 //check if milkWeight is negative.
-                if (Integer.parseInt(milkWeight) >= 0 && Integer.parseInt(farmID) > 0) {
+                if (Integer.parseInt(milkWeight) >= 0) {
                     Details obj = new Details(farmID, milkWeight); //create new 'details' obj
                     list.add(obj);  //add obj to list
                     ArrayList<Details> returnedList = data.putIfAbsent(date, list); //add list if key is absent
@@ -165,7 +165,7 @@ public class Farm {
                         return null;   //if returnedList is null, obj is added.
                     }
                 } else {
-                    throw new Exception("farmID or milk weight is negative");
+                    throw new Exception("milk weight is negative");
                 }
             }
         } catch (NullPointerException e) {
@@ -211,7 +211,7 @@ public class Farm {
             throw new Exception("Milk Weight is empty");
           } else {
                 //check if milkWeight is negative.
-                if (Integer.parseInt(milkWeight) >= 0 && Integer.parseInt(farmID) > 0) {
+                if (Integer.parseInt(milkWeight) >= 0) {
                     switch (flag) {
                         case 1:                             //case 1: edit date
                             if (data.containsKey(date)) {
@@ -219,13 +219,13 @@ public class Farm {
                                 list = data.get(date);
                                 for (int i = 0; i < list.size(); i++) {
                                     obj = list.get(i);
-                                    if (obj.farmID == Integer.parseInt(farmID) && obj.milkWeight == Integer.parseInt(milkWeight)) {
+                                    if (obj.milkWeight == Integer.parseInt(milkWeight)) {
                                         list.remove(i);       //find old record and remove it array list associated with old date.
                                         break;
                                     }
                                 }
                                 try {
-                                    add(newDate, Integer.toString(obj.farmID), Integer.toString(obj.milkWeight));  //Add record to new date.
+                                    add(newDate, obj.farmID, Integer.toString(obj.milkWeight));  //Add record to new date.
                                     return data.get(newDate);
                                 } catch (Exception e) {
                                     return null;
@@ -243,8 +243,8 @@ public class Farm {
                                     obj = list.get(i);
 
                                     //check if farmID present on specified date. if yes, replace. else return null.
-                                    if (obj.farmID == Integer.parseInt(farmID) && obj.milkWeight == Integer.parseInt(milkWeight)) {
-                                        obj.farmID = Integer.parseInt(newFarmID);
+                                    if (obj.farmID.equals(farmID) && obj.milkWeight == Integer.parseInt(milkWeight)) {
+                                        obj.farmID = newFarmID;
                                         check = true;
                                         break;
                                     }
@@ -264,7 +264,7 @@ public class Farm {
                                     obj = list.get(i);
 
                                     //check if farmID and milkWeight match the specified. If yes, replace. else return null.
-                                    if (obj.farmID == Integer.parseInt(farmID) && obj.milkWeight == Integer.parseInt(milkWeight)) {
+                                    if (obj.farmID.equals(farmID) && obj.milkWeight == Integer.parseInt(milkWeight)) {
                                         obj.milkWeight = Integer.parseInt(newMilkWeight);
                                         check = true;
                                     }
@@ -306,23 +306,24 @@ public class Farm {
                 throw new Exception("Milk Weight is empty");
         } else {
                 //check if milkWeight is negative.
-                if (Integer.parseInt(milkWeight) >= 0 && Integer.parseInt(farmID) > 0) {
+                if (Integer.parseInt(milkWeight) >= 0) {
                     list = data.get(date);
                     for (int i = 0; i < list.size(); i++)       //if farmID and milkWeight match specified
                     {                                          //remove record from arrayList and substitute for the old ArrayList.
-                        if (list.get(i).farmID == Integer.parseInt(farmID) && list.get(i).milkWeight == Integer.parseInt(milkWeight)) {
+                        if (list.get(i).farmID.equals(farmID) && list.get(i).milkWeight == Integer.parseInt(milkWeight)) {
                             list.remove(i);
-                        }
+                            break;
+                        }                        
                     }
                     data.put(date, list);
                     return data.get(date);
                 } else {
-                    list.add(new Details("-4", "-4"));   //farmID and/or milkWeight is negative
-                    return list;
+                  throw new Exception("parameters are negative");                    
                 }
             }
         } catch (NullPointerException e) {
-            throw new Exception("One or more of the parameters are null");
+          throw new Exception("parameters are null");
+            
         } catch (NumberFormatException e) {   //Parameters not passed properly
             throw new Exception("Parameters passed as String instead of int or vice versa");
         }
@@ -400,7 +401,7 @@ public class Farm {
                    /* Move elements of arr[0..i-1], that are 
                       greater than key, to one position ahead 
                       of their current position */
-                    while (j >= 0 && list.get(j).farmID > key.farmID) {
+                    while (j >= 0 && list.get(j).farmID.compareTo(key.farmID) > 0) {
                         list.set(j + 1, list.get(j));
                         j = j - 1;
                     }
@@ -422,10 +423,10 @@ public class Farm {
      * @param list2
      * @return
      */
-    private int farmIDIndex(int farmID, ArrayList<Details> list) {
+    private int farmIDIndex(String farmID, ArrayList<Details> list) {
 
         for (int j = 0; j < list.size(); j++) {
-            if (farmID == list.get(j).farmID) {
+            if (farmID.equals(list.get(j).farmID)) {
                 return j; //return index
             }
         }
@@ -542,7 +543,7 @@ public class Farm {
                         }
 
                         for (int j = 0; j < temp.size(); j++) {
-                            if (temp.get(j).farmID == Integer.parseInt(farmID)) //checks if farmID passed as argument matches that in record.
+                            if (temp.get(j).farmID.equals(farmID)) //checks if farmID passed as argument matches that in record.
                             {
                                 try {
                                     if (list.get(month - 1).month != month) //checks if month associated with previous item in list is not equal to the one being checked right now.
@@ -633,7 +634,7 @@ public class Farm {
                                 continue;
                             }
                             for (int j = 0; j < temp.size(); j++) {
-                                if (temp.get(j).farmID == Integer.parseInt(farmID)) {
+                                if (temp.get(j).farmID.equals(farmID)) {
                                     try {
                                         if (list.get(f) == null) {
                                             list.add(f, temp.get(j));
@@ -667,7 +668,7 @@ public class Farm {
                       /* Move elements of arr[0..i-1], that are 
                          greater than key, to one position ahead 
                          of their current position */
-                    while (j >= 0 && list.get(j).farmID > key.farmID) {
+                    while (j >= 0 && list.get(j).farmID.compareTo(key.farmID) > 0) {
                         list.set(j + 1, list.get(j));
                         j = j - 1;
                     }
@@ -747,7 +748,7 @@ public class Farm {
                                 continue;
                             }
                             for (int j = 0; j < temp.size(); j++) {
-                                if (temp.get(j).farmID == Integer.parseInt(farmID)) {
+                                if (temp.get(j).farmID .equals(farmID)) {
                                     try {
                                         if (list.get(f) == null) {
                                             list.add(temp.get(j));
@@ -781,7 +782,7 @@ public class Farm {
                       /* Move elements of arr[0..i-1], that are 
                          greater than key, to one position ahead 
                          of their current position */
-                    while (j >= 0 && list.get(j).farmID > key.farmID) {
+                    while (j >= 0 && list.get(j).farmID.compareTo(key.farmID) > 0) {
                         list.set(j + 1, list.get(j));
                         j = j - 1;
                     }
@@ -814,4 +815,9 @@ public class Farm {
     public ArrayList<String> getFarmIDs() {
         return farmIDs;
     }
+    
+    public Map<String, ArrayList<Farm.Details>> returnMap(){
+      return data;
+    }
+    
 }
