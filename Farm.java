@@ -1,7 +1,8 @@
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+package application;
+
+import javafx.util.Pair;
+
+import java.util.*;
 
 /**
  * Stores milk weight data for each farms and date that is being tracked
@@ -800,14 +801,19 @@ public class Farm {
         return data.values();
     }
 
-    public ArrayList<Details> getAllDetails() {
+    public List<Pair<String, Details>> getAllDetails() {
         int totalSize = 0;
         for (ArrayList<Details> list : data.values())
             totalSize += list.size();
 
-        ArrayList<Details> allDetails = new ArrayList<>(totalSize);
-        for (ArrayList<Details> list : data.values())
-            allDetails.addAll(list);
+        List<Pair<String, Details>> allDetails = new ArrayList<>(totalSize);
+        for (Map.Entry<String, ArrayList<Details>> entry : data.entrySet()) {
+            String date = entry.getKey();
+            ArrayList<Details> detailsForThisDate = entry.getValue();
+
+            for (Details details : detailsForThisDate)
+                allDetails.add(new Pair<>(date, details));
+        }
 
         return allDetails;
     }

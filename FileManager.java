@@ -1,8 +1,8 @@
 package application;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import javafx.util.Pair;
+
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,6 +26,8 @@ public class FileManager {
             contents.append(line);
             contents.append("\n");
         }
+
+        bufferedReader.close();
 
         return parse(contents.toString());
     }
@@ -109,6 +111,41 @@ public class FileManager {
 
         // Return the farm object
         return farm;
+    }
+
+    /**
+     * Write the data stored in the Farm object to a CSV string. This string can be then saved as a CSV file.
+     *
+     * @param farm farm to serialize
+     * @return string of CSV contents
+     */
+    public String serialize(Farm farm) {
+        StringBuilder output = new StringBuilder();
+
+        output.append("date,farm_id,weight");
+
+        for (Pair<String, Farm.Details> data : farm.getAllDetails()) {
+            String date = data.getKey();
+            Farm.Details details = data.getValue();
+
+            output.append(String.format("%s,%s,%s", date, details.getFarmID(), details.getMilkWeight()));
+        }
+
+        return output.toString();
+    }
+
+    /**
+     * Serializes the farm then writes it to the given file.
+     * 
+     * @param farm farm to save
+     * @param fileName file to save to
+     * @throws IOException when there is an error saving the file
+     * @see #serialize(Farm)
+     */
+    public void save(Farm farm, String fileName) throws IOException {
+        FileWriter fileWriter = new FileWriter(fileName, false);
+        fileWriter.write(serialize(farm));
+        fileWriter.close();
     }
 
     public static class ParsingException extends RuntimeException {
