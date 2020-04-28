@@ -1,8 +1,9 @@
 package application;
 
+import java.util.ArrayList;
 import java.util.List;
 
-
+import application.Farm.Details;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -28,7 +29,9 @@ public class Main extends Application {
 	private static final int WINDOW_WIDTH = 650;
 	private static final int WINDOW_HEIGHT = 220;
 	private static final String APP_TITLE = "Milk Weights Program";
-
+	private Farm farm;
+	private ArrayList<Details> displayFarms;
+	
 	public void addEditSetup(String change, TextArea fileOutput) {
 		Stage newWindow = new Stage();
 		GridPane gPane = new GridPane();
@@ -48,7 +51,7 @@ public class Main extends Application {
 		gPane.setHgap(10);
 		gPane.setPadding(new Insets(5, 5, 5, 5));
 
-		Scene secondScene = new Scene(gPane, 330, 155);
+		Scene secondScene = new Scene(gPane, 330, 190);
 		
 		Button submit = new Button("Submit!");
 		submit.setOnAction(new EventHandler<ActionEvent>() {
@@ -103,10 +106,77 @@ public class Main extends Application {
 		newWindow.show();
 	}
 
+	public void parse(String filename, TextArea fileOutput) {
+		
+		System.out.println("load started.\n");
+		
+		try {
+			
+			FileManager fm = new FileManager();
+			this.farm = fm.load(filename);
+			System.out.println("load worked.\n");
+			
+		} catch (Exception e) {
+			fileOutput.setPromptText("File is not valid");
+			e.printStackTrace();
+		}
+		
+	}
+	
+	public void displayReport(String report, ArrayList<TextField> variables, TextArea fileOutput) {
+		try {
+			
+			ArrayList<String> keys = new ArrayList<String>();
+			String output = "";
+			
+			for (TextField t : variables) {
+				keys.add(t.getText());//gets the text from each text field
+			}
+			
+			//based on the report, the arraylist WILL have the correct Strings, and we use these
+			if (report.equals("Farm Report")) {
+				String farmid = keys.get(0);
+				String year = keys.get(1);
+				System.out.println(farmid + year);
+				System.out.println("farm: " +farm.toString());
+				displayFarms = farm.farmReport(farmid, year);				
+			} else if (report.equals("Monthly Report")) {
+				String month = keys.get(0);
+				String year = keys.get(1);
+				System.out.println(month + year);
+				System.out.println("farm: " +farm.toString());
+				displayFarms = farm.monthlyReport(month, year);
+			} else if (report.equals("Annual Report")) {
+				String year = keys.get(0);
+				displayFarms = farm.annualReport(year);
+			} else {
+				String year = keys.get(0);
+				String startMonth = keys.get(1);
+				String day = keys.get(2);
+				String endMonth = keys.get(3);
+				String endDay = keys.get(4);
+				
+				displayFarms = farm.dateRange(year, startMonth, day, endMonth, endDay);
+			}
+			output += "  Farm ID    Month    Weight\n";
+			
+			for (Details d: displayFarms) {
+				output += String.format("%d  %d  %d\n", d.getFarmID(), d.getMonth(), d.getMilkWeight());
+			}
+			
+			fileOutput.setText(output);
+
+		} catch (Exception e) {
+			fileOutput.setText("Error: " + e.getMessage());
+			e.printStackTrace();
+		}
+	}
+		
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		//Save args example
 		args = this.getParameters().getRaw();
+		
 
 		//Creating TextField for file input
 		TextField fileInput = new TextField();
@@ -130,43 +200,80 @@ public class Main extends Application {
 			GridPane gPane = new GridPane();
 			String select = reportComboBox.getSelectionModel().getSelectedItem();
 			
+			ArrayList<TextField> variables = new ArrayList<TextField>();
+			//set up for various reports
 			if (select.equals("Farm Report")) {
 				gPane.add(new Label("Enter farm: "), 0, 0);
-				gPane.add(new TextField(), 1, 0);
+				TextField tFarm = new TextField();
+				gPane.add(tFarm, 1, 0);
+				
 				gPane.add(new Label("Enter year: "), 0, 1);
-				gPane.add(new TextField(), 1, 1);
+				TextField tYear = new TextField();
+				gPane.add(tYear, 1, 1);
+				
+				variables.add(tFarm);
+				variables.add(tYear);
 			}
 			else if (select.equals("Annual Report")) {
 				gPane.add(new Label("Enter year: "), 0, 0);
-				gPane.add(new TextField(), 1, 0);
+				TextField tYear = new TextField();
+				gPane.add(tYear, 1, 0);
+				
+				variables.add(tYear);
 			}
 			else if (select.equals("Monthly Report")) {
 				gPane.add(new Label("Enter month: "), 0, 0);
-				gPane.add(new TextField(), 1, 0);
+				TextField tMonth = new TextField();
+				gPane.add(tMonth, 1, 0);
+				
 				gPane.add(new Label("Enter year: "), 0, 1);
-				gPane.add(new TextField(), 1, 1);
+				TextField tYear = new TextField();
+				gPane.add(tYear, 1, 1);
+				
+				variables.add(tMonth);
+				variables.add(tYear);
 			}
 			else {
 				gPane.add(new Label("Enter year: "), 0, 0);
-				gPane.add(new TextField(), 1, 0);
+				TextField tYear = new TextField();
+				gPane.add(tYear, 1, 0);
+								
 				gPane.add(new Label("Enter start month: "), 0, 1);
-				gPane.add(new TextField(), 1, 1);
+				TextField tSMonth = new TextField();
+				gPane.add(tSMonth, 1, 1);
+				
 				gPane.add(new Label("Enter start day: "), 0, 2);
-				gPane.add(new TextField(), 1, 2);
+				TextField tSDay = new TextField();
+				gPane.add(tSDay, 1, 2);
+				
 				gPane.add(new Label("Enter end month: "), 0, 3);
-				gPane.add(new TextField(), 1, 3);
+				TextField tEMonth = new TextField();
+				gPane.add(tEMonth, 1, 3);
+				
 				gPane.add(new Label("Enter end day: "), 0, 4);
-				gPane.add(new TextField(), 1, 4);
+				TextField tEDay = new TextField();
+				gPane.add(tEDay, 1, 4);
+				
+				variables.add(tYear);
+				variables.add(tSMonth);
+				variables.add(tSDay);
+				variables.add(tEMonth);
+				variables.add(tEDay);
 			}
 			
 			//Creating Button for submission of inserted text
+			//When clicked, file parses, and and info displays
 			Button submit = new Button("Submit!");
 			submit.setOnAction(new EventHandler<ActionEvent>() {
 				public void handle(ActionEvent event) {
 					// VERIFY DATA IS ENTERED CORRECTLY BEFORE PROCEEDING
 					// (I.E FILE EXISTS, FILE PARSES CORRECTLY, VALID ENTRIES IN TEXT FIELDS)
+					
+					parse(fileInput.getText(), fileOutput);
+					displayReport(select, variables, fileOutput);//display that report
+					
 					newWindow.hide();
-					fileOutput.setText(select); //CHANGE WITH FARM REPORT OUTPUT
+					//fileOutput.setText(select); 
 				}
 			});
 			gPane.add(submit, 0, 5);
