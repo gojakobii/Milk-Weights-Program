@@ -99,7 +99,11 @@ public class FileManager {
                 String formattedDate = month + day + year;
 
                 // Add data-point for this day into the farm
-                farm.add(formattedDate, farmID, weightStr);
+                try {
+                    farm.add(formattedDate, farmID, weightStr);
+                } catch (Exception e) {
+                    throw new RuntimeException("Error adding data to farm", e);
+                }
             }
         }
 
