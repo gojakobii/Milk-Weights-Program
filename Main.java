@@ -22,6 +22,8 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
@@ -39,7 +41,7 @@ public class Main extends Application {
 	// NOTE: this.getParameters().getRaw() will get these also
 	private List<String> args;
 
-	private static final int WINDOW_WIDTH = 513; //static width dimension for Scene
+	private static final int WINDOW_WIDTH = 520; //static width dimension for Scene
 	private static final int WINDOW_HEIGHT = 439; //static height dimension for Scene
 	private static final String APP_TITLE = "Milk Weights Program"; //static title for Scene
 	private Farm farm; //global Farm object to be operated on
@@ -725,6 +727,14 @@ public class Main extends Application {
 			}
 		});
 		display.getOnMouseClicked();
+		
+		Image image = new Image("cow.png");
+		ImageView iv1 = new ImageView();
+		iv1.setImage(image);
+		iv1.setFitWidth(100);
+        iv1.setPreserveRatio(true);
+        iv1.setSmooth(true);
+        iv1.setCache(true);
 
 		//Adding to GridPane
 		GridPane mainGrid = new GridPane();
@@ -750,6 +760,7 @@ public class Main extends Application {
 		sideGrid.add(write, 0, 4);
 		sideGrid.add(instructions, 0, 15);
 		sideGrid.add(close, 0, 16);
+		sideGrid.add(iv1, 1, 30);
 
 		//Setting up stage and scene
 		Scene scene = new Scene(new Group(), WINDOW_WIDTH, WINDOW_HEIGHT);
