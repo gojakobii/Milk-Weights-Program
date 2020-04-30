@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -103,6 +104,24 @@ public class TestFileManager {
         List<Farm.Details> may4Details = farm.getValues(new Date(5, 4, 2019));
         Assert.assertTrue(may4Details.stream().anyMatch(details ->
                 details.getFarmID().equals("Farm 18") && details.getMilkWeight() == 2245));
+    }
+
+    @Test
+    public void readFarmsInDirectory() throws Exception {
+        Farm farm = fm.loadFolder("application/test/singleYearData/");
+
+        // There should be 3 farms overall tracked in this folder
+        Assert.assertEquals(3, farm.getFarmIDs().size());
+
+        // There should be 1 details per farm per day
+        Assert.assertEquals(365 * 3, farm.getAllDetails().size());
+
+        // Check that for Feb. 4 2019, there are 3 tracked details, and one of them is for Farm 0 with 6,748 pounds of
+        // milk
+        List<Farm.Details> feb4Details = farm.getValues(new Date(2, 4, 2019));
+        Assert.assertEquals(3, feb4Details.size());
+        Assert.assertTrue(feb4Details.stream().anyMatch(details ->
+                details.getFarmID().equals("Farm 0") && details.getMilkWeight() == 6748));
     }
 
     @Test

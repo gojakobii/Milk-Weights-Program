@@ -2,6 +2,7 @@ package application;
 
 import javafx.util.Pair;
 
+import javax.imageio.IIOException;
 import java.awt.font.NumericShaper;
 import java.io.*;
 import java.util.HashMap;
@@ -31,6 +32,46 @@ public class FileManager {
         bufferedReader.close();
 
         return parse(contents.toString());
+    }
+
+    /**
+     * Reads (non-recursively) all CSV files from the given directory, and combines their contents into a single Farm
+     * object.
+     *
+     * @param folderPath the path to the folder containing the CSVs
+     * @return a Farm containing data from all CSVs in that folder
+     * @throws Exception from IO or errors adding to the farm
+     */
+    public Farm loadFolder(String folderPath) throws Exception {
+        File file = new File(folderPath);
+
+        // Check that the path refers to an existing folder
+        if (!file.exists())
+            throw new RuntimeException("Folder does not exist");
+        if (!file.isDirectory())
+            throw new RuntimeException("Path must refer to a folder, not a file");
+
+        // Find all CSV files in the folder
+        String[] csvFileNames = file.list((dir, fileName) -> fileName.endsWith(".csv"));
+
+        // Load the CSVs into a single farm object
+        Farm combined = new Farm();
+
+        //noinspection ConstantConditions <-- tell IntelliJ not to worry about csvFileNames being null (it won't be)
+        for (String csvFileName : csvFileNames) {
+            // Load this single CSV file
+            Farm farm = load(file.getPath() + "/" + csvFileName);
+
+            // Add its contents into the combined farm
+            for (Pair<Date, Farm.Details> pair : farm.getAllDetails()) {
+                Date date = pair.getKey();
+                Farm.Details details = pair.getValue();
+
+                combined.add(date, details.getFarmID(), details.getMilkWeight() + "");
+            }
+        }
+
+        return combined;
     }
 
     /**
