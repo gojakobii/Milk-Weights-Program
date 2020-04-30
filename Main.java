@@ -20,12 +20,9 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.VBox;
-import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
 public class Main extends Application {
@@ -178,7 +175,7 @@ public class Main extends Application {
 
 	public void displayReport(String report, ArrayList<TextField> variables, TableView table) throws Exception{
 		try {
-			displayStats dStats = new displayStats(farm);;
+			DisplayStats dStats = new DisplayStats(farm);;
 			ArrayList<String> keys = new ArrayList<String>();
 
 			for (TextField t : variables) {
@@ -203,13 +200,17 @@ public class Main extends Application {
 				displayFarms = farm.farmReport(farmid, year);
 				System.out.println(displayFarms.size());
 			} else if (report.equals("Monthly Report")) {
-				String month = fixMonth(keys.get(0));
-				String year = keys.get(1);
+				String monthStr = fixMonth(keys.get(0));
+				String yearStr = keys.get(1);
 				//				System.out.println(month + year);
 				//				System.out.println("farm: " +farm.toString());
 				System.out.println("ACCESSING MONTH REPORT");
-				displayFarms = farm.monthlyReport(month, year);
 
+				// TODO display a proper error message if an input was entered wrong
+				int year = Integer.parseInt(yearStr);
+				int month = Integer.parseInt(monthStr);
+
+				displayFarms = farm.monthlyReport(month, year);
 
 				//				String [][] freport = dStats.monthlyReportResult(month, year);
 				//				for (int row = 0; row < freport.length; row++) {
@@ -224,14 +225,21 @@ public class Main extends Application {
 				System.out.println("ACCESSING ANNUAL REPORT");
 				displayFarms = farm.annualReport(year);
 			} else {
-				String year = keys.get(0);
-				String startMonth = fixMonth(keys.get(1));
-				String day = keys.get(2);
-				String endMonth = fixMonth(keys.get(3));
-				String endDay = keys.get(4);
+				String yearStr = keys.get(0);
+				String startMonthStr = fixMonth(keys.get(1));
+				String startDayStr = keys.get(2);
+				String endMonthStr = fixMonth(keys.get(3));
+				String endDayStr = keys.get(4);
+
+				// TODO display a proper error message if an input was entered wrong
+				int year = Integer.parseInt(yearStr);
+				int startMonth = Integer.parseInt(startMonthStr);
+				int startDay = Integer.parseInt(startDayStr);
+				int endMonth = Integer.parseInt(endMonthStr);
+				int endDay = Integer.parseInt(endDayStr);
 
 				System.out.println("ACCESSING DATE RANGE REPORT");
-				displayFarms = farm.dateRange(year, startMonth, day, endMonth, endDay);
+				displayFarms = farm.dateRange(year, startMonth, startDay, endMonth, endDay);
 			}
 
 			//Setting up TableView for report output

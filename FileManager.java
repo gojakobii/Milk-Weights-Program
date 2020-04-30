@@ -78,7 +78,7 @@ public class FileManager {
                     throw new ParsingException("Missing one or more of these columns: date, farm_id, weight");
             } else {
                 // This isn't the first line, so it will contain one data point for some farm
-                String unformattedDate = columns[dateColumnIndex];
+                String date = columns[dateColumnIndex];
                 String farmID = columns[farmIDColumnIndex];
                 String weightStr = columns[weightColumnIndex];
 
@@ -90,20 +90,10 @@ public class FileManager {
                     throw new ParsingException("Couldn't parse weight '" + weightStr + "' as an integer", ex);
                 }
 
-                // Convert date to MMDDYYYY format (right now, it's YYYY-M-D)
-                String[] dateSplit = unformattedDate.split("-");
-                String year = dateSplit[0];
-                String month = dateSplit[1];
-                String day = dateSplit[2];
-
-                if (day.length() == 1) day = "0" + day;
-                if (month.length() == 1) month = "0" + month;
-
-                String formattedDate = month + day + year;
-
                 // Add data-point for this day into the farm
                 try {
-                    farm.add(formattedDate, farmID, weightStr);
+                    Date dateObj = Date.fromYYYYMD(date);
+                    farm.add(dateObj, farmID, weightStr);
                 } catch (Exception e) {
                     throw new RuntimeException("Error adding data to farm", e);
                 }
@@ -125,21 +115,12 @@ public class FileManager {
 
         output.append("date,farm_id,weight\n");
 
-        for (Pair<String, Farm.Details> data : farm.getAllDetails()) {
-            String date = data.getKey();
+        for (Pair<Date, Farm.Details> data : farm.getAllDetails()) {
+            Date date = data.getKey();
             Farm.Details details = data.getValue();
 
-            // Reformat the date - currently the date is in MMDDYYYY format, but we want it to be in YYYY-M-D format
-            int month;
-            int day;
-            try {
-                month = Integer.parseInt(date.substring(0, 2));
-                day = Integer.parseInt(date.substring(2, 4));
-            } catch (NumberFormatException ex) {
-                throw new RuntimeException("Farm's date was in invalid format", ex);
-            }
-            String year = date.substring(4);
-            String formattedDate = year + "-" + month + "-" + day;
+            // Reformat the date - we want it to be in YYYY-M-D format
+            String formattedDate = date.toYYYYMD();
 
             output.append(String.format("%s,%s,%s\n", formattedDate, details.getFarmID(), details.getMilkWeight()));
         }

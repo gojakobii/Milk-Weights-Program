@@ -1,6 +1,5 @@
 package application;
 
-import com.sun.javafx.image.PixelAccessor;
 import javafx.util.Pair;
 
 import java.util.*;
@@ -68,9 +67,9 @@ public class Farm {
 
     /**
      * A HashMap that associates a date with a list of details objects that keep track of the milk gathered for each
-     * farm on that date. The date should be written in the format of MMDDYYYY.
+     * farm on that date.
      */
-    private Map<String, ArrayList<Details>> data;
+    private Map<Date, ArrayList<Details>> data;
 
     /**
      * ArrayList containing the IDs of all the farms in the data map. Used for annual and date range report
@@ -103,17 +102,13 @@ public class Farm {
      * @param date
      * @return ArrayList<details>
      */
-    public ArrayList<Details> getValues(String date) {
+    public ArrayList<Details> getValues(Date date) {
         return (data.get(date));
     }
 
     /**
      * adds a milk weight record to this farm's records.
-     * ArrayList with -1 if date is empty
-     * ArrayList with -2 if farmID is empty
-     * ArrayList with -3 if date milkWeight empty
-     * ArrayList with -4 if farmID or milkWeight is negative
-     * ArrayList with -5 if date is null is empty
+     * Throws an exception if one of the parameters is invalid
      * Otherwise, returns list of all the details for that date
      *
      * @param date
@@ -122,14 +117,12 @@ public class Farm {
      * @return ArrayList<details> - updated values
      * @throws Exception 
      */
-    public ArrayList<Details> add(String date, String farmID, String milkWeight) throws Exception {
+    public ArrayList<Details> add(Date date, String farmID, String milkWeight) throws Exception {
 
         ArrayList<Details> list = new ArrayList<>();        
         try {
             // Verify that the given parameters are valid
-            if (date.isEmpty()) {
-                throw new Exception("Date is empty");
-            } else if (farmID.isEmpty())  //check if farmID is empty
+            if (farmID.isEmpty())  //check if farmID is empty
             {
               throw new Exception("FarmID is empty");
             } else if (milkWeight.isEmpty())  //check if milkWeight is empty
@@ -181,12 +174,7 @@ public class Farm {
      * if date is being edited, newFarmID and newMilkWeight are empty Strings.
      * if farmID is being edited, newMilkWeight is empty string.
      * if milkWeight is edited, there are no empty strings.
-     * ArrayList with -1 if date is empty
-     * ArrayList with -2 if farmID is empty
-     * ArrayList with -3 if date milkWeight empty
-     * ArrayList with -4 if farmID or milkWeight is negative
-     * ArrayList with -5 if date is null is empty
-     * ArrayList with -6 if there's a NumberFormatException (parameters not passed properly)
+     * Throws an exception if a parameter is invalid
      * Otherwise, returns list of all the details for the new date
      *
      * @param date   - never empty
@@ -199,19 +187,15 @@ public class Farm {
      * @return ArrayList<details> records for newDate
      * @throws Exception
      */
-    public ArrayList<Details> edit(String date, String farmID, String milkWeight, int flag, String newDate, String newFarmID, String newMilkWeight) throws Exception {
+    public ArrayList<Details> edit(Date date, String farmID, String milkWeight, int flag, Date newDate, String newFarmID, String newMilkWeight) throws Exception {
         ArrayList<Details> list = new ArrayList<Details>();
         try {
-          // Verify that the given parameters are valid
-            if (date.isEmpty()) {
-              throw new Exception("Date is empty");
-          } else if (farmID.isEmpty())  //check if farmID is empty
-          {
-            throw new Exception("FarmID is empty");
-          } else if (milkWeight.isEmpty())  //check if milkWeight is empty
-          {
-            throw new Exception("Milk Weight is empty");
-          } else {
+            // Verify that the given parameters are valid
+            if (farmID.isEmpty()) {
+                throw new Exception("FarmID is empty");
+            } else if (milkWeight.isEmpty()) {
+                throw new Exception("Milk Weight is empty");
+            } else {
                 //check if milkWeight is negative.
                 if (Integer.parseInt(milkWeight) >= 0) {
                     switch (flag) {
@@ -293,14 +277,12 @@ public class Farm {
      * removes a milk weight record to this farm's records.
      * @throws Exception 
      */
-    public ArrayList<Details> remove(String date, String farmID, String milkWeight) throws Exception {
+    public ArrayList<Details> remove(Date date, String farmID, String milkWeight) throws Exception {
 
         ArrayList<Details> list = new ArrayList<Details>();
         try {
           // Verify that the given parameters are valid
-              if (date.isEmpty()) {
-                throw new Exception("Date is empty");
-            } else if (farmID.isEmpty())  //check if farmID is empty
+              if (farmID.isEmpty())  //check if farmID is empty
               {
                 throw new Exception("FarmID is empty");
             } else if (milkWeight.isEmpty())  //check if milkWeight is empty
@@ -341,76 +323,63 @@ public class Farm {
      * @return
      * @throws Exception 
      */
-    public ArrayList<Details> monthlyReport(String month, String year) throws Exception {
+    public ArrayList<Details> monthlyReport(int month, int year) throws Exception {
         ArrayList<Details> list = new ArrayList<Details>();
         ArrayList<Details> temp = new ArrayList<Details>();
         try {
-            if (month.isEmpty() == true)  //check if date is empty
+            int numberOfDays = getNumberOfDaysInMonth(month, year);  //get number of days in year.
+            for (int i = 1; i <= numberOfDays; i++)  //format list in MMDDYYYY format.
             {
-              throw new Exception("Month is emtpy");
-            } else if (year.isEmpty() == true)  //check if year is empty
-            {
-              throw new Exception("Year is empty");
-            } else {
-                int numberOfDays = getNumberOfDaysInMonth(month, year);  //get number of days in year.
-                for (int i = 1; i <= numberOfDays; i++)  //format list in MMDDYYYY format.
-                {
-                    String date;
-                    if (i < 10) {
-                        date = month + "0" + i + year;
-                    } else {
-                        date = month + i + year;
-                    }
+                Date date = new Date(month, i, year);
 
-                    try {
-                        if (list.size() == 0)           //check if list is empty.
+                try {
+                    if (list.size() == 0)           //check if list is empty.
+                    {
+                        if (data.get(date).size() != 0)  //If yes, add data from date where records are first found to list.
                         {
-                            if (data.get(date).size() != 0)  //If yes, add data from date where records are first found to list.
-                            {
-                                list = data.get(date);
-                                continue;
-                            }
-                        }
-                    } catch (NullPointerException e)   //Calling .size() or .isEmpty() on an ArrayList with no values could result in NullPointer.
-                    {
-                        continue;
-                    }
-                    temp = data.get(date);     //if 'list' isnt empty, assign temp with values associated with 'date' (key).
-                    try {
-                        if (temp.size() == 0)  //check if values exist. If not, move on to next date.
+                            list = data.get(date);
                             continue;
-                    } catch (NullPointerException e) {
+                        }
+                    }
+                } catch (NullPointerException e)   //Calling .size() or .isEmpty() on an ArrayList with no values could result in NullPointer.
+                {
+                    continue;
+                }
+                temp = data.get(date);     //if 'list' isnt empty, assign temp with values associated with 'date' (key).
+                try {
+                    if (temp.size() == 0)  //check if values exist. If not, move on to next date.
                         continue;
-                    }
-
-                    for (int j = 0; j < temp.size(); j++)   //if values are present.
-                    {
-                        int k = farmIDIndex(temp.get(j).farmID, list);  //check if farmID is present in 'list'
-                        if (k == -1)
-                            list.add(temp.get(j));  //adds record to list if not present
-                        else
-                            list.get(k).milkWeight += temp.get(j).milkWeight;  //if present, the milkWeight is updated for that farmID.
-                    }
+                } catch (NullPointerException e) {
+                    continue;
                 }
 
-                Details key;
-                /*Function to sort farmIDs in ArrayList using insertion sort*/
-                int n = list.size();
-                for (int i = 1; i < n; i++) {
-                    key = list.get(i);
-                    int j = i - 1;
-         
-                   /* Move elements of arr[0..i-1], that are 
-                      greater than key, to one position ahead 
-                      of their current position */
-                    while (j >= 0 && list.get(j).farmID.compareTo(key.farmID) > 0) {
-                        list.set(j + 1, list.get(j));
-                        j = j - 1;
-                    }
-                    list.set(j + 1, key);
+                for (int j = 0; j < temp.size(); j++)   //if values are present.
+                {
+                    int k = farmIDIndex(temp.get(j).farmID, list);  //check if farmID is present in 'list'
+                    if (k == -1)
+                        list.add(temp.get(j));  //adds record to list if not present
+                    else
+                        list.get(k).milkWeight += temp.get(j).milkWeight;  //if present, the milkWeight is updated for that farmID.
                 }
-                return list;
             }
+
+            Details key;
+            /*Function to sort farmIDs in ArrayList using insertion sort*/
+            int n = list.size();
+            for (int i = 1; i < n; i++) {
+                key = list.get(i);
+                int j = i - 1;
+
+               /* Move elements of arr[0..i-1], that are
+                  greater than key, to one position ahead
+                  of their current position */
+                while (j >= 0 && list.get(j).farmID.compareTo(key.farmID) > 0) {
+                    list.set(j + 1, list.get(j));
+                    j = j - 1;
+                }
+                list.set(j + 1, key);
+            }
+            return list;
         } catch (NullPointerException e) {
             throw new Exception("One or more of the parameters are null");
         }
@@ -422,7 +391,7 @@ public class Farm {
      * Used in monthly report.
      *
      * @param farmID
-     * @param list2
+     * @param list
      * @return
      */
     private int farmIDIndex(String farmID, ArrayList<Details> list) {
@@ -440,13 +409,11 @@ public class Farm {
     /**
      * This method computes whether the specified year is a leap year or not.
      *
-     * @param yearString is the year that is being checked for leap-year-ness
-     *                   String must contain the digits of a single non-negative int for year.
+     * @param year is the year that is being checked for leap-year-ness
      * @return true when the specified year is a leap year, and false otherwise
      */
-    public static boolean getIsLeapYear(String yearString) {
+    public static boolean getIsLeapYear(int year) {
         boolean value = true;
-        int year = Integer.parseInt(yearString);
 
         if (year % 4 != 0) {
             value = false;
@@ -489,12 +456,12 @@ public class Farm {
      *              String must contain the digits of a single non-negative int for year.
      * @return the number of days in the specified month (between 28-31)
      */
-    public static int getNumberOfDaysInMonth(String month, String year) {
+    public static int getNumberOfDaysInMonth(int month, int year) {
         int days[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
-        int indexOfMonth = getMonthIndex(month);
-        if (indexOfMonth == 1 && getIsLeapYear(year) == true) {
+        int indexOfMonth = month - 1;
+        if (indexOfMonth == 1 && getIsLeapYear(year)) {
             return 29;
-        } else if (indexOfMonth == 1 && getIsLeapYear(year) == false) {
+        } else if (indexOfMonth == 1 && !getIsLeapYear(year)) {
             return 28;
         } else return days[indexOfMonth];
     }
@@ -518,23 +485,12 @@ public class Farm {
             {
               throw new Exception("Year is empty");
             } else {
-                int month = 1;              //variable to count month of year
-                while (month <= 12) {        //loop through all 12 months
-                    int numberOfDays = getNumberOfDaysInMonth(Integer.toString(month), year);   //gets no. of days in month for calculating date.
-                    for (int i = 1; i <= numberOfDays; i++) {
-                        String date;                                 //formatting date as MMDDYYYY
-                        if (month < 10) {
-                            if (i < 10)
-                                date = "0" + month + "0" + i + year;
-                            else
-                                date = "0" + month + i + year;
-                        } else {
-                            if (i < 10)
-                                date = month + "0" + i + year;
-                            else {
-                                date = Integer.toString(month) + i + year;
-                            }
-                        }
+                int yearInt = Integer.parseInt(year);
+
+                for (int month = 1; month <= 12; month++) {        //loop through all 12 months
+                    int numberOfDays = getNumberOfDaysInMonth(month, yearInt);   //gets no. of days in month for calculating date.
+                    for (int day = 1; day <= numberOfDays; day++) {
+                        Date date = new Date(month, day, yearInt);
                         temp = data.get(date);      //temp is assigned values associated with date.
                         try {
                             if (temp.size() == 0)      //if values dont exist move on to next date.
@@ -581,7 +537,6 @@ public class Farm {
                             }
                         }
                     }
-                    month++;         //increment month
                 }
 
                 return list;
@@ -608,26 +563,15 @@ public class Farm {
             {
               throw new Exception("Year is empty");
             } else {
+                int yearInt = Integer.parseInt(year);
+
                 for (int f = 0; f < farmIDs.size(); f++) {
                     String farmID = farmIDs.get(f);
 
-                    int month = 1;
-                    while (month <= 12) {
-                        int numberOfDays = getNumberOfDaysInMonth(Integer.toString(month), year);
-                        for (int i = 1; i <= numberOfDays; i++) {
-                            String date;
-                            if (month < 10) {
-                                if (i < 10)
-                                    date = "0" + month + "0" + i + year;
-                                else
-                                    date = "0" + month + i + year;
-                            } else {
-                                if (i < 10)
-                                    date = month + "0" + i + year;
-                                else {
-                                    date = Integer.toString(month) + i + year;
-                                }
-                            }
+                    for (int month = 1; month <= 12; month++) {
+                        int numberOfDays = getNumberOfDaysInMonth(month, yearInt);
+                        for (int day = 1; day <= numberOfDays; day++) {
+                            Date date = new Date(month, day, yearInt);
                             temp = data.get(date);
                             try {
                                 if (temp.size() == 0)
@@ -656,7 +600,6 @@ public class Farm {
                                 }
                             }
                         }
-                        month++;
                     }
                 }
 
@@ -694,105 +637,67 @@ public class Farm {
      * @throws Exception 
      */
 
-    public ArrayList<Details> dateRange(String year, String startMonth, String day, String endMonth, String endDay) throws Exception {
+    public ArrayList<Details> dateRange(int year, int startMonth, int startDay, int endMonth, int endDay) throws Exception {
         ArrayList<Details> list = new ArrayList<Details>();
         ArrayList<Details> temp = new ArrayList<Details>();
 
         try {
-            if (year.isEmpty() == true)  //check if year is empty
-              {
-                throw new Exception("Year is empty");
-              } 
-            else if(startMonth.isEmpty() == true) //check if start month is empty
-              {
-                throw new Exception("Start month is empty");
-              }
-            else if(day.isEmpty() == true)
-            {
-              throw new Exception("Start day is empty");
-            }
-            else if(endMonth.isEmpty() == true)
-            {
-              throw new Exception("End month is empty");
-            }
-            else if(endDay.isEmpty() == true)
-            {
-              throw new Exception("End day is empty");
-            }               
-            else {
-                for (int f = 0; f < farmIDs.size(); f++) {
-                    String farmID = farmIDs.get(f);
-                    int month = Integer.parseInt(startMonth);
-                    while (month <= Integer.parseInt(endMonth)) {
-                        int numberOfDays = getNumberOfDaysInMonth(Integer.toString(month), year);
-                        if (month == Integer.parseInt(endMonth))
-                            numberOfDays = Integer.parseInt(endDay);
+            for (int f = 0; f < farmIDs.size(); f++) {
+                String farmID = farmIDs.get(f);
+                for (int month = startMonth; month <= endMonth; month++) {
+                    int numberOfDays = getNumberOfDaysInMonth(month, year);
+                    if (month == endMonth)
+                        numberOfDays = endDay;
 
-                        for (int i = 1; i <= numberOfDays; i++) {
-                            String date;
-                            if (month < 10) {
-                                if (i < 10)
-                                    date = "0" + month + "0" + i + year;
-                                else
-                                    date = "0" + month + i + year;
-                            } else {
-                                if (i < 10)
-                                    date = Integer.toString(month) + "0" + i + year;
-                                else {
-                                    date = Integer.toString(month) + i + year;
-                                }
-                            }
-                            temp = data.get(date);
-                            try {
-                                if (temp.size() == 0)
-                                    continue;
-                            } catch (NullPointerException e) {
+                    for (int i = 1; i <= numberOfDays; i++) {
+                        Date date = new Date(month, i, year);
+                        temp = data.get(date);
+                        try {
+                            if (temp.size() == 0)
                                 continue;
-                            }
-                            for (int j = 0; j < temp.size(); j++) {
-                                if (temp.get(j).farmID .equals(farmID)) {
-                                    try {
-                                        if (list.get(f) == null) {
+                        } catch (NullPointerException e) {
+                            continue;
+                        }
+                        for (int j = 0; j < temp.size(); j++) {
+                            if (temp.get(j).farmID .equals(farmID)) {
+                                try {
+                                    if (list.get(f) == null) {
+                                        list.add(temp.get(j));
+                                    } else {
+                                        try {
+                                            int prevMilkWeight = list.get(f).milkWeight;
+                                            list.set(f, new Details(farmID, Integer.toString(prevMilkWeight + temp.get(j).milkWeight)));
+                                        } catch (IndexOutOfBoundsException e) {
                                             list.add(temp.get(j));
-                                        } else {
-                                            try {
-                                                int prevMilkWeight = list.get(f).milkWeight;
-                                                list.set(f, new Details(farmID, Integer.toString(prevMilkWeight + temp.get(j).milkWeight)));
-                                            } catch (IndexOutOfBoundsException e) {
-                                                list.add(temp.get(j));
-                                            }
                                         }
-                                    } catch (NullPointerException e) {
-                                        list.add(temp.get(j));
-                                    } catch (IndexOutOfBoundsException e) {
-                                        list.add(temp.get(j));
                                     }
+                                } catch (NullPointerException | IndexOutOfBoundsException e) {
+                                    list.add(temp.get(j));
                                 }
                             }
                         }
-                        month++;
                     }
                 }
-
-                Details key;
-                /*Function to sort array using insertion sort*/
-                int n = list.size();
-                for (int i = 1; i < n; i++) {
-                    key = list.get(i);
-                    int j = i - 1;
-            
-                      /* Move elements of arr[0..i-1], that are 
-                         greater than key, to one position ahead 
-                         of their current position */
-                    while (j >= 0 && list.get(j).farmID.compareTo(key.farmID) > 0) {
-                        list.set(j + 1, list.get(j));
-                        j = j - 1;
-                    }
-                    list.set(j + 1, key);
-                }
-
-                return list;
             }
+
+            Details key;
+            /*Function to sort array using insertion sort*/
+            int n = list.size();
+            for (int i = 1; i < n; i++) {
+                key = list.get(i);
+                int j = i - 1;
+
+                  /* Move elements of arr[0..i-1], that are
+                     greater than key, to one position ahead
+                     of their current position */
+                while (j >= 0 && list.get(j).farmID.compareTo(key.farmID) > 0) {
+                    list.set(j + 1, list.get(j));
+                    j = j - 1;
+                }
+                list.set(j + 1, key);
+            }
+
+            return list;
         } catch (NullPointerException e) {
             throw new Exception("One or more of the parameters are null");    
         }
@@ -802,14 +707,14 @@ public class Farm {
         return data.values();
     }
 
-    public List<Pair<String, Details>> getAllDetails() {
+    public List<Pair<Date, Details>> getAllDetails() {
         int totalSize = 0;
         for (ArrayList<Details> list : data.values())
             totalSize += list.size();
 
-        List<Pair<String, Details>> allDetails = new ArrayList<>(totalSize);
-        for (Map.Entry<String, ArrayList<Details>> entry : data.entrySet()) {
-            String date = entry.getKey();
+        List<Pair<Date, Details>> allDetails = new ArrayList<>(totalSize);
+        for (Map.Entry<Date, ArrayList<Details>> entry : data.entrySet()) {
+            Date date = entry.getKey();
             ArrayList<Details> detailsList = entry.getValue();
             for (Details details : detailsList)
                 allDetails.add(new Pair<>(date, details));
@@ -822,7 +727,7 @@ public class Farm {
         return farmIDs;
     }
     
-    public Map<String, ArrayList<Farm.Details>> returnMap(){
+    public Map<Date, ArrayList<Farm.Details>> returnMap(){
       return data;
     }
     

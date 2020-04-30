@@ -1,5 +1,6 @@
 package application.test;
 
+import application.Date;
 import application.Farm;
 import application.FileManager;
 import org.junit.Assert;
@@ -35,8 +36,8 @@ public class TestFileManager {
         Assert.assertEquals("1", farm.getFarmIDs().get(0));
 
         Assert.assertEquals(2, farm.viewValues().size());
-        Assert.assertEquals(20, farm.getValues("04092020").get(0).getMilkWeight());
-        Assert.assertEquals(18, farm.getValues("04102020").get(0).getMilkWeight());
+        Assert.assertEquals(20, farm.getValues(new Date(4, 9, 2020)).get(0).getMilkWeight());
+        Assert.assertEquals(18, farm.getValues(new Date(4, 10, 2020)).get(0).getMilkWeight());
     }
 
     /**
@@ -55,8 +56,8 @@ public class TestFileManager {
         Assert.assertEquals("1", farm.getFarmIDs().get(0));
 
         Assert.assertEquals(2, farm.getAllDetails().size());
-        Assert.assertEquals(435, farm.getValues("04202020").get(0).getMilkWeight());
-        Assert.assertEquals(444, farm.getValues("04212020").get(0).getMilkWeight());
+        Assert.assertEquals(435, farm.getValues(new Date(4, 20, 2020)).get(0).getMilkWeight());
+        Assert.assertEquals(444, farm.getValues(new Date(4, 21, 2020)).get(0).getMilkWeight());
     }
 
     /**
@@ -99,7 +100,7 @@ public class TestFileManager {
 
         Assert.assertTrue(farm.getFarmIDs().contains("Farm 18"));
 
-        List<Farm.Details> may4Details = farm.getValues("05042019");
+        List<Farm.Details> may4Details = farm.getValues(new Date(5, 4, 2019));
         Assert.assertTrue(may4Details.stream().anyMatch(details ->
                 details.getFarmID().equals("Farm 18") && details.getMilkWeight() == 2245));
     }
@@ -107,8 +108,8 @@ public class TestFileManager {
     @Test
     public void serializeSimpleFarm() throws Exception {
         Farm farm = new Farm();
-        farm.add("04292020", "Farm 1", "9");
-        farm.add("04302020", "Farm 1", "10");
+        farm.add(new Date(4, 29, 2020), "Farm 1", "9");
+        farm.add(new Date(4, 30, 2020), "Farm 1", "10");
 
         String serialized = fm.serialize(farm);
 

@@ -3,7 +3,7 @@ package application;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
-public class displayStats {
+public class DisplayStats {
   
   private final static String[] MONTHS_OF_YEAR = {"January", "February", "March", "April", "May",  //Stores month of years as numbers
       "June", "July", "August", "September", "October", "November", "December"};
@@ -11,7 +11,7 @@ public class displayStats {
   DecimalFormat df = new DecimalFormat("#.00");
   
   Farm farm;
-  public displayStats(Farm farm) {
+  public DisplayStats(Farm farm) {
     this.farm = farm;
   }
   
@@ -50,7 +50,6 @@ public class displayStats {
   
   /**
    * returns total and percent total of each farm for AnnualReport as a 2D matrix with 1st row as total
-   * @param farmID
    * @param year
    * @return
    * @throws Exception 
@@ -81,12 +80,12 @@ public class displayStats {
   
   /**
    * returns total and percent total of each farm for Monthly Report as a 2D matrix with 1st row as total
-   * @param farmID
+   * @param month
    * @param year
    * @return
    * @throws Exception 
    */
-  public String[][] monthlyReportResult(String month, String year) throws Exception{    
+  public String[][] monthlyReportResult(int month, int year) throws Exception{
     ArrayList<Farm.Details> list = farm.monthlyReport(month, year);   
     String matrix[][] = new String[list.size() + 1][2];
     int total = 0;
@@ -112,14 +111,13 @@ public class displayStats {
   
   /**
    * returns total and percent total of each farm for Date-Range Report as a 2D matrix with 1st row as total
-   * @param farmID
    * @param year
    * @return
    * @throws Exception 
    */
-  public String[][] dateRangeResult(String year, String month, String day, String endMonth, String endDay) throws Exception{
+  public String[][] dateRangeResult(int year, int month, int day, int endMonth, int endDay) throws Exception{
     ArrayList<Farm.Details> list = farm.dateRange(year, month, day, endMonth, endDay);
-    String matrix[][] = new String[list.size() + 1][2];
+    String[][] matrix = new String[list.size() + 1][2];
     int total = 0;
     for(int i = 0; i < matrix.length; i++)
     {
