@@ -101,6 +101,20 @@ public class TestFileManager {
 
         List<Farm.Details> may4Details = farm.getValues("05042019");
         Assert.assertTrue(may4Details.stream().anyMatch(details ->
-                details.getFarmID().equals("Farm 18") && details.getMilkWeight() == 8187));
+                details.getFarmID().equals("Farm 18") && details.getMilkWeight() == 2245));
+    }
+
+    @Test
+    public void serializeSimpleFarm() throws Exception {
+        Farm farm = new Farm();
+        farm.add("04292020", "Farm 1", "9");
+        farm.add("04302020", "Farm 1", "10");
+
+        String serialized = fm.serialize(farm);
+
+        System.out.println("Serialized farm: " + serialized);
+        Assert.assertTrue(serialized.startsWith("date,farm_id,weight\n"));
+        Assert.assertTrue(serialized.contains("2020-4-29,Farm 1,9\n"));
+        Assert.assertTrue(serialized.contains("2020-4-30,Farm 1,10\n"));
     }
 }

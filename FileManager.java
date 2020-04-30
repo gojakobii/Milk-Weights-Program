@@ -2,6 +2,7 @@ package application;
 
 import javafx.util.Pair;
 
+import java.awt.font.NumericShaper;
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
@@ -122,13 +123,25 @@ public class FileManager {
     public String serialize(Farm farm) {
         StringBuilder output = new StringBuilder();
 
-        output.append("date,farm_id,weight");
+        output.append("date,farm_id,weight\n");
 
         for (Pair<String, Farm.Details> data : farm.getAllDetails()) {
             String date = data.getKey();
             Farm.Details details = data.getValue();
 
-            output.append(String.format("%s,%s,%s", date, details.getFarmID(), details.getMilkWeight()));
+            // Reformat the date - currently the date is in MMDDYYYY format, but we want it to be in YYYY-M-D format
+            int month;
+            int day;
+            try {
+                month = Integer.parseInt(date.substring(0, 2));
+                day = Integer.parseInt(date.substring(2, 4));
+            } catch (NumberFormatException ex) {
+                throw new RuntimeException("Farm's date was in invalid format", ex);
+            }
+            String year = date.substring(4);
+            String formattedDate = year + "-" + month + "-" + day;
+
+            output.append(String.format("%s,%s,%s\n", formattedDate, details.getFarmID(), details.getMilkWeight()));
         }
 
         return output.toString();
