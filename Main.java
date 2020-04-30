@@ -22,6 +22,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
@@ -32,86 +33,130 @@ public class Main extends Application {
 	// NOTE: this.getParameters().getRaw() will get these also
 	private List<String> args;
 
-	private static final int WINDOW_WIDTH = 650;
-	private static final int WINDOW_HEIGHT = 220;
+	private static final int WINDOW_WIDTH = 492;
+	private static final int WINDOW_HEIGHT = 439;
 	private static final String APP_TITLE = "Milk Weights Program";
 	private Farm farm;
-	private displayStats dStats;
 	private ArrayList<Details> displayFarms;
+	private TableView table = new TableView();
 
-	public void addEditSetup(String change, TextArea fileOutput) {
-		Stage newWindow = new Stage();
-		GridPane gPane = new GridPane();
+	public class DetailsFormat {
+		private String farmID;
+		private int month;
+		private int milkWeight;
+		private int totalWeight;
 
-		gPane.add(new Label("Enter year: "), 0, 0);
-		gPane.add(new TextField(), 1, 0);
-		gPane.add(new Label("Enter month: "), 0, 1);
-		gPane.add(new TextField(), 1, 1);
-		gPane.add(new Label("Enter day: "), 0, 2);
-		gPane.add(new TextField(), 1, 2);
-		gPane.add(new Label("Enter farm: "), 0, 3);
-		gPane.add(new TextField(), 1, 3);
-		gPane.add(new Label("Enter weight: "), 0, 4);
-		gPane.add(new TextField(), 1, 4);
+		private DetailsFormat(String farmID, int month, int milkWeight, int totalWeight) {
+			this.farmID = farmID;
+			this.month = month;
+			this.milkWeight = milkWeight;
+			this.totalWeight = totalWeight;
+		}
 
-		gPane.setVgap(4);
-		gPane.setHgap(10);
-		gPane.setPadding(new Insets(5, 5, 5, 5));
+		public String getFarmID() {
+			return farmID;
+		}
 
-		Scene secondScene = new Scene(gPane, 330, 190);
+		public Integer getMonth() {
+			return month;
+		}
 
-		Button submit = new Button("Submit!");
-		submit.setOnAction(new EventHandler<ActionEvent>() {
-			public void handle(ActionEvent event) {
-				// VERIFY DATA IS ENTERED CORRECTLY BEFORE PROCEEDING
-				// (I.E FILE EXISTS, FILE PARSES CORRECTLY, VALID ENTRIES IN TEXT FIELDS)
-				newWindow.hide();
-				fileOutput.setText(change); //CHANGE WITH ADD/EDIT
-			}
-		});
-		gPane.add(submit, 0, 5);
+		public Integer getMilkWeight() {
+			return milkWeight;
+		}
 
-		// New window (Stage)
-		newWindow.setTitle(change);
-		newWindow.setScene(secondScene);
-		newWindow.show();
+		public Integer getTotalWeight() {
+			return totalWeight;
+		}
+
+		public void setFarmID(String f) {
+			this.farmID = f;
+		}
+
+		public void setMonth(Integer m) {
+			this.month = m;
+		}
+
+		public void setMilkWeight(Integer mW) {
+			this.milkWeight = mW;
+		}
+
+		public void setTotalWeight(Integer tW) {
+			this.totalWeight = tW;
+		}
 	}
 
-	public void removeSetup(String change, TextArea fileOutput) {
-		Stage newWindow = new Stage();
-		GridPane gPane = new GridPane();
+	//	public void addEditSetup(String change, TextArea fileOutput) {
+	//		Stage newWindow = new Stage();
+	//		GridPane gPane = new GridPane();
+	//
+	//		gPane.add(new Label("Enter year: "), 0, 0);
+	//		gPane.add(new TextField(), 1, 0);
+	//		gPane.add(new Label("Enter month: "), 0, 1);
+	//		gPane.add(new TextField(), 1, 1);
+	//		gPane.add(new Label("Enter day: "), 0, 2);
+	//		gPane.add(new TextField(), 1, 2);
+	//		gPane.add(new Label("Enter farm: "), 0, 3);
+	//		gPane.add(new TextField(), 1, 3);
+	//		gPane.add(new Label("Enter weight: "), 0, 4);
+	//		gPane.add(new TextField(), 1, 4);
+	//
+	//		gPane.setVgap(4);
+	//		gPane.setHgap(10);
+	//		gPane.setPadding(new Insets(5, 5, 5, 5));
+	//
+	//		Scene secondScene = new Scene(gPane, 330, 190);
+	//
+	//		Button submit = new Button("Submit!");
+	//		submit.setOnAction(new EventHandler<ActionEvent>() {
+	//			public void handle(ActionEvent event) {
+	//				newWindow.hide();
+	//				fileOutput.setText(change); 
+	//			}
+	//		});
+	//		gPane.add(submit, 0, 5);
+	//
+	//		// New window (Stage)
+	//		newWindow.setTitle(change);
+	//		newWindow.setScene(secondScene);
+	//		newWindow.show();
+	//	}
 
-		gPane.add(new Label("Enter year: "), 0, 0);
-		gPane.add(new TextField(), 1, 0);
-		gPane.add(new Label("Enter month: "), 0, 1);
-		gPane.add(new TextField(), 1, 1);
-		gPane.add(new Label("Enter day: "), 0, 2);
-		gPane.add(new TextField(), 1, 2);
-		gPane.add(new Label("Enter farm: "), 0, 3);
-		gPane.add(new TextField(), 1, 3);
-
-		gPane.setVgap(4);
-		gPane.setHgap(10);
-		gPane.setPadding(new Insets(5, 5, 5, 5));
-
-		Scene secondScene = new Scene(gPane, 330, 125);
-
-		Button submit = new Button("Submit!");
-		submit.setOnAction(new EventHandler<ActionEvent>() {
-			public void handle(ActionEvent event) {
-				// VERIFY DATA IS ENTERED CORRECTLY BEFORE PROCEEDING
-				// (I.E FILE EXISTS, FILE PARSES CORRECTLY, VALID ENTRIES IN TEXT FIELDS)
-				newWindow.hide();
-				fileOutput.setText(change); //CHANGE WITH REMOVE
-			}
-		});
-		gPane.add(submit, 0, 5);
-
-		// New window (Stage)
-		newWindow.setTitle(change);
-		newWindow.setScene(secondScene);
-		newWindow.show();
-	}
+	//	public void removeSetup(String change, TextArea fileOutput) {
+	//		Stage newWindow = new Stage();
+	//		GridPane gPane = new GridPane();
+	//
+	//		gPane.add(new Label("Enter year: "), 0, 0);
+	//		gPane.add(new TextField(), 1, 0);
+	//		gPane.add(new Label("Enter month: "), 0, 1);
+	//		gPane.add(new TextField(), 1, 1);
+	//		gPane.add(new Label("Enter day: "), 0, 2);
+	//		gPane.add(new TextField(), 1, 2);
+	//		gPane.add(new Label("Enter farm: "), 0, 3);
+	//		gPane.add(new TextField(), 1, 3);
+	//
+	//		gPane.setVgap(4);
+	//		gPane.setHgap(10);
+	//		gPane.setPadding(new Insets(5, 5, 5, 5));
+	//
+	//		Scene secondScene = new Scene(gPane, 330, 125);
+	//
+	//		Button submit = new Button("Submit!");
+	//		submit.setOnAction(new EventHandler<ActionEvent>() {
+	//			public void handle(ActionEvent event) {
+	//				// VERIFY DATA IS ENTERED CORRECTLY BEFORE PROCEEDING
+	//				// (I.E FILE EXISTS, FILE PARSES CORRECTLY, VALID ENTRIES IN TEXT FIELDS)
+	//				newWindow.hide();
+	//				fileOutput.setText(change); //CHANGE WITH REMOVE
+	//			}
+	//		});
+	//		gPane.add(submit, 0, 5);
+	//
+	//		// New window (Stage)
+	//		newWindow.setTitle(change);
+	//		newWindow.setScene(secondScene);
+	//		newWindow.show();
+	//	}
 
 	public void parse(String filename, Button submit) throws Exception {
 		System.out.println("load started.\n");
@@ -120,17 +165,16 @@ public class Main extends Application {
 			FileManager fm = new FileManager();
 			this.farm = fm.load(filename);
 			System.out.println("load worked.\n");
-			dStats = new displayStats(farm);
 
 		} catch (Exception e) { 
 			throw new Exception();
 		}
 	}
 
-	public void displayReport(String report, ArrayList<TextField> variables, TextArea fileOutput) throws Exception{
+	public void displayReport(String report, ArrayList<TextField> variables, TableView table) throws Exception{
 		try {
+			displayStats dStats = new displayStats(farm);;
 			ArrayList<String> keys = new ArrayList<String>();
-			String output = "";
 
 			for (TextField t : variables) {
 				keys.add(t.getText()); //Gets the text from each TextField
@@ -142,14 +186,14 @@ public class Main extends Application {
 				String year = keys.get(1);
 				//				System.out.println(farmid + year);
 				//				System.out.println("farm: " + farm.toString());
-				
-//				String [][] freport = dStats.farmReportResult(farmid, year);
-//				for (int row = 0; row < freport.length; row++) {
-//					for (int col = 0; col < freport[row].length; col++) {
-//						System.out.print(freport[row][col]);
-//					}
-//					System.out.println();
-//				}
+
+				//				String [][] freport = dStats.farmReportResult(farmid, year);
+				//				for (int row = 0; row < freport.length; row++) {
+				//					for (int col = 0; col < freport[row].length; col++) {
+				//						System.out.print(freport[row][col]);
+				//					}
+				//					System.out.println();
+				//				}
 				System.out.println("ACCESSING FARM REPORT");
 				displayFarms = farm.farmReport(farmid, year);		
 				System.out.println(displayFarms.size());
@@ -160,15 +204,15 @@ public class Main extends Application {
 				//				System.out.println("farm: " +farm.toString());
 				System.out.println("ACCESSING MONTH REPORT");
 				displayFarms = farm.monthlyReport(month, year);
-				
-				
-//				String [][] freport = dStats.monthlyReportResult(month, year);
-//				for (int row = 0; row < freport.length; row++) {
-//					for (int col = 0; col < freport[row].length; col++) {
-//						System.out.print(freport[row][col]);
-//					}
-//					System.out.println();
-//				}
+
+
+				//				String [][] freport = dStats.monthlyReportResult(month, year);
+				//				for (int row = 0; row < freport.length; row++) {
+				//					for (int col = 0; col < freport[row].length; col++) {
+				//						System.out.print(freport[row][col]);
+				//					}
+				//					System.out.println();
+				//				}
 			} else if (report.equals("Annual Report")) {
 				String year = keys.get(0);
 
@@ -181,21 +225,35 @@ public class Main extends Application {
 				String endMonth = keys.get(3);
 				String endDay = keys.get(4);
 
-				System.out.println("ACCESSING DATA RANGE REPORT");
+				System.out.println("ACCESSING DATE RANGE REPORT");
 				displayFarms = farm.dateRange(year, startMonth, day, endMonth, endDay);
 			}
-			output += "  Farm ID    Month    Weight\n";
 
+			//Setting up TableView for report output
+			ObservableList<DetailsFormat> data = FXCollections.observableArrayList();
+
+			/**
+			 * MAKE IF STATEMENT SO NO MONTH APPEARS FOR OTHER REPORTS BESIDES FARM - ACCORDING TO SHASHANK
+			 */
 			for (Details d : displayFarms) {
-				output += d.getFarmID() + " " + d.getMonth() + " " + d.getMilkWeight() + "\n";
+				data.add(new DetailsFormat(d.getFarmID(), d.getMonth(), d.getMilkWeight(), 0));
 			}
+			table.setItems(data);
 
-			fileOutput.setText(output);
+			TableColumn farmIDCol = new TableColumn("Farm ID");
+			TableColumn monthCol = new TableColumn("Month");
+			TableColumn milkWeightCol = new TableColumn("Milk Weight");
+			TableColumn totalCol = new TableColumn("Total Weight");
 
+			farmIDCol.setCellValueFactory(new PropertyValueFactory<DetailsFormat, String>("farmID"));
+			monthCol.setCellValueFactory(new PropertyValueFactory<DetailsFormat, Integer>("month"));
+			milkWeightCol.setCellValueFactory(new PropertyValueFactory<DetailsFormat, Integer>("milkWeight"));
+			totalCol.setCellValueFactory(new PropertyValueFactory<DetailsFormat, Integer>("totalWeight"));
+
+			table.getColumns().setAll(farmIDCol, monthCol, milkWeightCol, totalCol);
 		} catch (Exception e) {
-			fileOutput.setText("Error: " + e.getMessage());
 			e.printStackTrace();
-			//throw new Exception();
+			throw new Exception();
 		}
 	}
 
@@ -208,42 +266,59 @@ public class Main extends Application {
 		TextField fileInput = new TextField();
 		fileInput.setPromptText("Input a valid text file .csv");
 
-		//Creating TextArea for reports and statistics
-		TextArea fileOutput = new TextArea();
-		fileOutput.setEditable(false);
-		fileOutput.setPromptText("Display for selected report type and statistics");
-		
-		TableView table = new TableView();
-		table.setEditable(false);
-		TableColumn farmIDCol = new TableColumn("Farm ID");
-        TableColumn monthCol = new TableColumn("Month");
-        TableColumn milkWeightCol = new TableColumn("Milk Weight");
-        TableColumn totalCol = new TableColumn("Total Weight");
-        
-        table.getColumns().addAll(farmIDCol, monthCol, milkWeightCol, totalCol);
-        
-        /**
-         * PROBABLY RELOCATE TO DISPLAYREPORT METHOD
-         * ITERATURE THROUGH DISPLAY ARRAYLIST AND ADD TO OBSERVABLE CREATING NEW DETAIL OBJECTS
-         * IN ALL OTHER REPORTS EXCEPT FARM REPLACE MONTH PARAMETER WITH " " 
-         * ADD TABLE TO STAGE
-         */
-        ObservableList<Details> data = FXCollections.observableArrayList();
-		
+		//Creating Button for instructions
+		Button instructions = new Button("Instructions");
+		instructions.setOnAction(new EventHandler<ActionEvent>() {
+			public void handle(ActionEvent event) {
+				Alert confirm = new Alert(AlertType.CONFIRMATION, "Please enter the folder path containing valid .csv document data"
+						+ " into the text field. Then select a report type:\n"
+						+ "\t1. Farm Report: Please enter a valid farm ID and year. \n"
+						+ "\t2. Annual Report: Please enter a valid year. \n"
+						+ "\t3. Monthly Report: Please enter a valid month and year. \n"
+						+ "\t4. Date Range Report: Please enter a valid year, starting day, starting month, ending month, and ending year. \n"
+						+ "(NOTE: All months and days less than 10, please enter with a 0 prefix (i.e. 01, 02, 03, etc))\n\n"
+						+ "Once all fields have been filled in, click the 'Submit' button to display the corresponding report. \n\n"
+						+ "The 'Write' button allows the user to have their activity be output into a file. The 'Close' button allows the user"
+						+ " to end the program. The 'Add', 'Edit', 'Remove', and 'Display' are included for display and do note perform "
+						+ "legitimate computations. Enjoy the program!");
+				confirm.show();
+			}
+		});
+
+		//Creating Button for instructions
+		Button close = new Button("Close");
+		close.setMinWidth(78);
+		close.setAlignment(Pos.BASELINE_LEFT);
+		close.setOnAction(new EventHandler<ActionEvent>() {
+			public void handle(ActionEvent event) {
+				System.exit(0);
+			}
+		});
+
+		//Creating Button to write output file
+		Button write = new Button("Write");
+		write.setMinWidth(78);
+		write.setAlignment(Pos.BASELINE_LEFT);
+		write.setOnAction(new EventHandler<ActionEvent>() {
+			public void handle(ActionEvent event) {
+				// WRITE CODE
+			}
+		});
+
 		//Creating ComboBox for report type selection
 		ComboBox<String> reportComboBox = new ComboBox<String>();
 		reportComboBox.getItems().addAll(
 				"Farm Report",
 				"Annual Report",
 				"Monthly Report",
-				"Data Range Report");
+				"Date Range Report");
 		reportComboBox.setValue("Select a report");
 		reportComboBox.setOnAction((e) -> {
 			Stage newWindow = new Stage();
 			GridPane gPane = new GridPane();
 			String select = reportComboBox.getSelectionModel().getSelectedItem();
 			ArrayList<TextField> variables = new ArrayList<TextField>();
-			
+
 			//set up for various reports
 			if (select.equals("Farm Report")) {
 				gPane.add(new Label("Enter farm: "), 0, 0);
@@ -309,17 +384,13 @@ public class Main extends Application {
 			Button submit = new Button("Submit!");
 			submit.setOnAction(new EventHandler<ActionEvent>() {
 				public void handle(ActionEvent event) {
-					// VERIFY DATA IS ENTERED CORRECTLY BEFORE PROCEEDING
-					// (I.E FILE EXISTS, FILE PARSES CORRECTLY, VALID ENTRIES IN TEXT FIELDS)
 					newWindow.hide();
 
 					try {
-						System.out.println("START PARSING....");
 						parse(fileInput.getText(), submit);
-						System.out.println("DISPLAY REPORT");
-						displayReport(select, variables, fileOutput);//display that report
+						displayReport(select, variables, table); //display that report
 					} catch (Exception e) {
-						Alert warning = new Alert(AlertType.WARNING, "Something went wrong! "
+						Alert warning = new Alert(AlertType.ERROR, "Something went wrong! "
 								+ "Check that you've entered a valid file name and input valid information intended for "
 								+ "computation."); 
 						warning.show();
@@ -338,14 +409,13 @@ public class Main extends Application {
 			newWindow.show();
 		});
 
-		//Creating VBox layout manager for buttons
-		VBox vBox = new VBox();
-
 		//Defining Buttons to operate on the file
 		Button add = new Button("Add");
+		add.setMinWidth(78);
+		add.setAlignment(Pos.BASELINE_LEFT);
 		add.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent event) {
-				Alert confirm = new Alert(AlertType.CONFIRMATION, "This is for display purposes "
+				Alert confirm = new Alert(AlertType.WARNING, "This is for display purposes "
 						+ "only and cannot yet accurately perform computations."); 
 				confirm.show();
 				//addEditSetup("Add", fileOutput);
@@ -353,9 +423,11 @@ public class Main extends Application {
 		});
 
 		Button remove = new Button("Remove");
+		remove.setMinWidth(78);
+		remove.setAlignment(Pos.BASELINE_LEFT);
 		remove.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent event) {
-				Alert confirm = new Alert(AlertType.CONFIRMATION, "This is for display purposes "
+				Alert confirm = new Alert(AlertType.WARNING, "This is for display purposes "
 						+ "only and cannot yet accurately perform computations."); 
 				confirm.show();
 				//removeSetup("Remove", fileOutput);
@@ -363,9 +435,11 @@ public class Main extends Application {
 		});
 
 		Button edit = new Button("Edit");
+		edit.setMinWidth(78);
+		edit.setAlignment(Pos.BASELINE_LEFT);
 		edit.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent event) {
-				Alert confirm = new Alert(AlertType.CONFIRMATION, "This is for display purposes "
+				Alert confirm = new Alert(AlertType.WARNING, "This is for display purposes "
 						+ "only and cannot yet accurately perform computations."); 
 				confirm.show();
 				//addEditSetup("Edit", fileOutput);
@@ -373,9 +447,11 @@ public class Main extends Application {
 		});
 
 		Button display = new Button("Display");
+		display.setMinWidth(78);
+		display.setAlignment(Pos.BASELINE_LEFT);
 		display.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent event) {
-				Alert confirm = new Alert(AlertType.CONFIRMATION, "This is for display purposes "
+				Alert confirm = new Alert(AlertType.WARNING, "This is for display purposes "
 						+ "only and cannot yet accurately perform computations."); 
 				confirm.show();
 				//				VBox displayButtons = new VBox();
@@ -501,9 +577,7 @@ public class Main extends Application {
 				//				newWindow.show();
 			}
 		});
-
 		display.getOnMouseClicked();
-		vBox.getChildren().addAll(add, remove, edit, display);
 
 		//Adding to GridPane
 		GridPane mainGrid = new GridPane();
@@ -514,8 +588,21 @@ public class Main extends Application {
 		mainGrid.add(fileInput, 1, 0);
 		mainGrid.add(new Label("Farm Report Type: "), 2, 0);
 		mainGrid.add(reportComboBox, 3, 0);
-		mainGrid.add(fileOutput, 0, 1, 4, 1);
-		mainGrid.add(vBox, 4, 1);
+		mainGrid.add(table, 0, 1, 3, 1);
+		
+		//Adding to side GridPane
+		GridPane sideGrid = new GridPane();
+		sideGrid.setVgap(4);
+		sideGrid.setHgap(10);
+		sideGrid.setPadding(new Insets(0, 0, 0, 0));
+		mainGrid.add(sideGrid, 3, 1);
+		sideGrid.add(add, 0, 0);
+		sideGrid.add(remove, 0, 1);
+		sideGrid.add(edit, 0, 2);
+		sideGrid.add(display, 0, 3);
+		sideGrid.add(write, 0, 4);
+		sideGrid.add(instructions, 0, 15);
+		sideGrid.add(close, 0, 16);
 
 		//Setting up stage and scene
 		Scene scene = new Scene(new Group(), WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -525,7 +612,6 @@ public class Main extends Application {
 		primaryStage.setScene(scene);
 		primaryStage.show();
 	}   
-
 
 	/**
 	 * @param args
