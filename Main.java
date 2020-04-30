@@ -29,6 +29,11 @@ import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
 public class Main extends Application {
+	private static final String[] MONTHS = {
+			"january", "february", "march", "april", "may", "june", "july", "august", "september", "november",
+			"december"
+	};
+
 	// store any command-line arguments that were entered.
 	// NOTE: this.getParameters().getRaw() will get these also
 	private List<String> args;
@@ -166,7 +171,7 @@ public class Main extends Application {
 			this.farm = fm.load(filename);
 			System.out.println("load worked.\n");
 
-		} catch (Exception e) { 
+		} catch (Exception e) {
 			throw new Exception();
 		}
 	}
@@ -195,10 +200,10 @@ public class Main extends Application {
 				//					System.out.println();
 				//				}
 				System.out.println("ACCESSING FARM REPORT");
-				displayFarms = farm.farmReport(farmid, year);		
+				displayFarms = farm.farmReport(farmid, year);
 				System.out.println(displayFarms.size());
 			} else if (report.equals("Monthly Report")) {
-				String month = keys.get(0);
+				String month = fixMonth(keys.get(0));
 				String year = keys.get(1);
 				//				System.out.println(month + year);
 				//				System.out.println("farm: " +farm.toString());
@@ -220,9 +225,9 @@ public class Main extends Application {
 				displayFarms = farm.annualReport(year);
 			} else {
 				String year = keys.get(0);
-				String startMonth = keys.get(1);
+				String startMonth = fixMonth(keys.get(1));
 				String day = keys.get(2);
-				String endMonth = keys.get(3);
+				String endMonth = fixMonth(keys.get(3));
 				String endDay = keys.get(4);
 
 				System.out.println("ACCESSING DATE RANGE REPORT");
@@ -392,7 +397,7 @@ public class Main extends Application {
 					} catch (Exception e) {
 						Alert warning = new Alert(AlertType.ERROR, "Something went wrong! "
 								+ "Check that you've entered a valid file name and input valid information intended for "
-								+ "computation."); 
+								+ "computation.");
 						warning.show();
 						e.printStackTrace();
 					}
@@ -416,7 +421,7 @@ public class Main extends Application {
 		add.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent event) {
 				Alert confirm = new Alert(AlertType.WARNING, "This is for display purposes "
-						+ "only and cannot yet accurately perform computations."); 
+						+ "only and cannot yet accurately perform computations.");
 				confirm.show();
 				//addEditSetup("Add", fileOutput);
 			}
@@ -428,7 +433,7 @@ public class Main extends Application {
 		remove.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent event) {
 				Alert confirm = new Alert(AlertType.WARNING, "This is for display purposes "
-						+ "only and cannot yet accurately perform computations."); 
+						+ "only and cannot yet accurately perform computations.");
 				confirm.show();
 				//removeSetup("Remove", fileOutput);
 			}
@@ -440,7 +445,7 @@ public class Main extends Application {
 		edit.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent event) {
 				Alert confirm = new Alert(AlertType.WARNING, "This is for display purposes "
-						+ "only and cannot yet accurately perform computations."); 
+						+ "only and cannot yet accurately perform computations.");
 				confirm.show();
 				//addEditSetup("Edit", fileOutput);
 			}
@@ -452,7 +457,7 @@ public class Main extends Application {
 		display.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent event) {
 				Alert confirm = new Alert(AlertType.WARNING, "This is for display purposes "
-						+ "only and cannot yet accurately perform computations."); 
+						+ "only and cannot yet accurately perform computations.");
 				confirm.show();
 				//				VBox displayButtons = new VBox();
 				//				Stage newWindow = new Stage();
@@ -589,7 +594,7 @@ public class Main extends Application {
 		mainGrid.add(new Label("Farm Report Type: "), 2, 0);
 		mainGrid.add(reportComboBox, 3, 0);
 		mainGrid.add(table, 0, 1, 3, 1);
-		
+
 		//Adding to side GridPane
 		GridPane sideGrid = new GridPane();
 		sideGrid.setVgap(4);
@@ -611,7 +616,37 @@ public class Main extends Application {
 		primaryStage.setTitle(APP_TITLE);
 		primaryStage.setScene(scene);
 		primaryStage.show();
-	}   
+	}
+
+	/**
+	 * Given a user-inputted month (e.g. "5" or "may"), returns the correct month in the "MM" format (e.g. "05") that
+	 * can then be passed to the Farm class as a valid parameter.
+	 *
+	 * @param userInputMonth the user-inputted month string
+	 * @return the month in the MM format
+	 */
+	private String fixMonth(String userInputMonth) {
+		// Ignore whitespace at beginning and end of string, and ignore case
+		userInputMonth = userInputMonth.trim().toLowerCase();
+
+		// User inputted month as a single digit, e.g. "5", when it should be "05"
+		if (userInputMonth.length() == 1) return "0" + userInputMonth;
+
+		// User inputted month as the name of the month (possibly abbreviated)
+		if (userInputMonth.length() >= 3) {
+			for (int i = 0; i < MONTHS.length; i++) {
+				if (MONTHS[i].startsWith(userInputMonth)) {
+					// The user meant this month (MONTHS[i]) -- we should return the string value of (i+1)
+					String monthStr = String.valueOf(i + 1);
+					if (monthStr.length() == 1) monthStr = "0" + monthStr;
+					return monthStr;
+				}
+			}
+		}
+
+		// The user either already entered a month in the MM format, or put the month in an invalid format
+		return userInputMonth;
+	}
 
 	/**
 	 * @param args
