@@ -30,7 +30,6 @@ public class TestFileManager {
                 "2020-4-10,1,18";
 
         Farm farm = fm.parse(csvContents);
-        List<Farm.Details> allDetails = farm.getAllDetails();
 
         Assert.assertEquals(1, farm.getFarmIDs().size());
         Assert.assertEquals("1", farm.getFarmIDs().get(0));
@@ -102,6 +101,6 @@ public class TestFileManager {
 
         List<Farm.Details> may4Details = farm.getValues("05042019");
         Assert.assertTrue(may4Details.stream().anyMatch(details ->
-                details.getFarmID() == 83 && details.getMilkWeight() == 8187));
+                details.getFarmID().equals("Farm 18") && details.getMilkWeight() == 8187));
     }
 }
