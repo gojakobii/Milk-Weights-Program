@@ -75,6 +75,24 @@ public class FileManager {
     }
 
     /**
+     * If the given pathname refers to a folder, calls {@link #loadFolder(String)} and reads all the CSV files in that
+     * folder to a farm. Otherwise, if the pathname refers to a normal file, calls {@link #load(String)} and reads the
+     * single CSV file specified by the path.
+     *
+     * @param pathname the path to the CSV file, or the folder of CSVs
+     * @return a farm containing the data
+     * @throws Exception from IO or from errors adding to the farm
+     */
+    public Farm loadFileOrFolder(String pathname) throws Exception {
+        File file = new File(pathname);
+
+        if (file.isDirectory())
+            return loadFolder(pathname);
+        else
+            return load(pathname);
+    }
+
+    /**
      * Parse the given contents of a CSV file. Note that this method is for when you already have the contents of the
      * CSV file as a String. If you only have the name of the file, use {@link #load(String)}, which will read the
      * file from disk first.

@@ -165,7 +165,7 @@ public class Main extends Application {
 
 		try {
 			FileManager fm = new FileManager();
-			this.farm = fm.load(filename);
+			this.farm = fm.loadFileOrFolder(filename);
 			System.out.println("load worked.\n");
 
 		} catch (Exception e) {
@@ -277,7 +277,7 @@ public class Main extends Application {
 
 		//Creating TextField for file input
 		TextField fileInput = new TextField();
-		fileInput.setPromptText("Input a valid text file .csv");
+		fileInput.setPromptText("Input the name of a .csv file or folder containing .csv");
 
 		//Creating Button for instructions
 		Button instructions = new Button("Instructions");
