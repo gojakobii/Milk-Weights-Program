@@ -5,6 +5,8 @@ import java.util.List;
 
 import application.Farm.Details;
 import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -16,6 +18,8 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
@@ -32,6 +36,7 @@ public class Main extends Application {
 	private static final int WINDOW_HEIGHT = 220;
 	private static final String APP_TITLE = "Milk Weights Program";
 	private Farm farm;
+	private displayStats dStats;
 	private ArrayList<Details> displayFarms;
 
 	public void addEditSetup(String change, TextArea fileOutput) {
@@ -115,6 +120,7 @@ public class Main extends Application {
 			FileManager fm = new FileManager();
 			this.farm = fm.load(filename);
 			System.out.println("load worked.\n");
+			dStats = new displayStats(farm);
 
 		} catch (Exception e) { 
 			throw new Exception();
@@ -136,18 +142,37 @@ public class Main extends Application {
 				String year = keys.get(1);
 				//				System.out.println(farmid + year);
 				//				System.out.println("farm: " + farm.toString());
-
-				displayFarms = farm.farmReport(farmid, year);				
+				
+//				String [][] freport = dStats.farmReportResult(farmid, year);
+//				for (int row = 0; row < freport.length; row++) {
+//					for (int col = 0; col < freport[row].length; col++) {
+//						System.out.print(freport[row][col]);
+//					}
+//					System.out.println();
+//				}
+				System.out.println("ACCESSING FARM REPORT");
+				displayFarms = farm.farmReport(farmid, year);		
+				System.out.println(displayFarms.size());
 			} else if (report.equals("Monthly Report")) {
 				String month = keys.get(0);
 				String year = keys.get(1);
 				//				System.out.println(month + year);
 				//				System.out.println("farm: " +farm.toString());
-
+				System.out.println("ACCESSING MONTH REPORT");
 				displayFarms = farm.monthlyReport(month, year);
+				
+				
+//				String [][] freport = dStats.monthlyReportResult(month, year);
+//				for (int row = 0; row < freport.length; row++) {
+//					for (int col = 0; col < freport[row].length; col++) {
+//						System.out.print(freport[row][col]);
+//					}
+//					System.out.println();
+//				}
 			} else if (report.equals("Annual Report")) {
 				String year = keys.get(0);
 
+				System.out.println("ACCESSING ANNUAL REPORT");
 				displayFarms = farm.annualReport(year);
 			} else {
 				String year = keys.get(0);
@@ -156,20 +181,21 @@ public class Main extends Application {
 				String endMonth = keys.get(3);
 				String endDay = keys.get(4);
 
+				System.out.println("ACCESSING DATA RANGE REPORT");
 				displayFarms = farm.dateRange(year, startMonth, day, endMonth, endDay);
 			}
 			output += "  Farm ID    Month    Weight\n";
 
-			for (Details d: displayFarms) {
-				output += String.format("%d  %d  %d\n", d.getFarmID(), d.getMonth(), d.getMilkWeight());
+			for (Details d : displayFarms) {
+				output += d.getFarmID() + " " + d.getMonth() + " " + d.getMilkWeight() + "\n";
 			}
 
 			fileOutput.setText(output);
 
 		} catch (Exception e) {
 			fileOutput.setText("Error: " + e.getMessage());
-			//e.printStackTrace();
-			throw new Exception();
+			e.printStackTrace();
+			//throw new Exception();
 		}
 	}
 
@@ -186,7 +212,24 @@ public class Main extends Application {
 		TextArea fileOutput = new TextArea();
 		fileOutput.setEditable(false);
 		fileOutput.setPromptText("Display for selected report type and statistics");
-
+		
+		TableView table = new TableView();
+		table.setEditable(false);
+		TableColumn farmIDCol = new TableColumn("Farm ID");
+        TableColumn monthCol = new TableColumn("Month");
+        TableColumn milkWeightCol = new TableColumn("Milk Weight");
+        TableColumn totalCol = new TableColumn("Total Weight");
+        
+        table.getColumns().addAll(farmIDCol, monthCol, milkWeightCol, totalCol);
+        
+        /**
+         * PROBABLY RELOCATE TO DISPLAYREPORT METHOD
+         * ITERATURE THROUGH DISPLAY ARRAYLIST AND ADD TO OBSERVABLE CREATING NEW DETAIL OBJECTS
+         * IN ALL OTHER REPORTS EXCEPT FARM REPLACE MONTH PARAMETER WITH " " 
+         * ADD TABLE TO STAGE
+         */
+        ObservableList<Details> data = FXCollections.observableArrayList();
+		
 		//Creating ComboBox for report type selection
 		ComboBox<String> reportComboBox = new ComboBox<String>();
 		reportComboBox.getItems().addAll(
@@ -273,12 +316,14 @@ public class Main extends Application {
 					try {
 						System.out.println("START PARSING....");
 						parse(fileInput.getText(), submit);
+						System.out.println("DISPLAY REPORT");
 						displayReport(select, variables, fileOutput);//display that report
 					} catch (Exception e) {
 						Alert warning = new Alert(AlertType.WARNING, "Something went wrong! "
 								+ "Check that you've entered a valid file name and input valid information intended for "
 								+ "computation."); 
 						warning.show();
+						e.printStackTrace();
 					}
 				}
 			});
