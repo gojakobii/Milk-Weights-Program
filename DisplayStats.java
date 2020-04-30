@@ -4,141 +4,112 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 public class DisplayStats {
-  
-  private final static String[] MONTHS_OF_YEAR = {"January", "February", "March", "April", "May",  //Stores month of years as numbers
-      "June", "July", "August", "September", "October", "November", "December"};
-  
-  DecimalFormat df = new DecimalFormat("#.00");
-  
-  Farm farm;
-  public DisplayStats(Farm farm) {
-    this.farm = farm;
-  }
-  
-  /**
-   * returns total and percent total of each month for FarmReport as a 2D matrix with 1st row as total
-   * @param farmID
-   * @param year
-   * @return
-   * @throws Exception 
-   */
-  public String[][] farmReportResult(String farmID, String year) throws Exception{    
-    ArrayList<Farm.Details> list = farm.farmReport(farmID, year);
-    String matrix[][] = new String[list.size() + 1][2];
-    int total = 0;
-    for(int i = 0; i < matrix.length; i++)
-    {
-      if(i == 0)
-      {
-        matrix[i][0] = "Total";        
-        for(int j = 0; j < list.size(); j++)
-        {
-          total += list.get(j).getMilkWeight();
-        }
-        matrix[0][1] = Integer.toString(total);
-        continue;
-      }  
-      
-        matrix[i][0] = MONTHS_OF_YEAR[list.get(i-1).getMonth() - 1];        
-        double percent = list.get(i-1).getMilkWeight() / (double)total * 100;
-        matrix[i][1] = df.format(percent) + "%";
-        
-    } 
-    
-    return matrix;
-  }
-  
-  /**
-   * returns total and percent total of each farm for AnnualReport as a 2D matrix with 1st row as total
-   * @param year
-   * @return
-   * @throws Exception 
-   */
-  public String[][] annualReportResult(String year) throws Exception{    
-    ArrayList<Farm.Details> list = farm.annualReport(year);
-    String matrix[][] = new String[list.size() + 1][2];    
-    int total = 0;
-    for(int i = 0; i < matrix.length; i++)
-    {
-      if(i == 0)
-      {
-        matrix[i][0] = "Total";        
-        for(int j = 0; j < list.size(); j++)
-        {
-          total += list.get(j).getMilkWeight();
-        }
-        matrix[0][1] = Integer.toString(total);
-        continue;
-      }
-      matrix[i][0] = list.get(i-1).getFarmID();
-      double percent = list.get(i-1).getMilkWeight() / (double)total * 100;
-      matrix[i][1] = df.format(percent) + "%";
-    }
-    
-    return matrix;
-  }
-  
-  /**
-   * returns total and percent total of each farm for Monthly Report as a 2D matrix with 1st row as total
-   * @param month
-   * @param year
-   * @return
-   * @throws Exception 
-   */
-  public String[][] monthlyReportResult(int month, int year) throws Exception{
-    ArrayList<Farm.Details> list = farm.monthlyReport(month, year);   
-    String matrix[][] = new String[list.size() + 1][2];
-    int total = 0;
-    for(int i = 0; i < matrix.length; i++)
-    {
-      if(i == 0)
-      {
-        matrix[i][0] = "Total";        
-        for(int j = 0; j < list.size(); j++)
-        {
-          total += list.get(j).getMilkWeight();
-        }
-        matrix[0][1] = Integer.toString(total);
-        continue;
-      }
-      matrix[i][0] = list.get(i-1).getFarmID();
-      double percent = list.get(i-1).getMilkWeight() / (double)total * 100;
-      matrix[i][1] = df.format(percent) + "%";
-    }
-    
-    return matrix;
-  }
-  
-  /**
-   * returns total and percent total of each farm for Date-Range Report as a 2D matrix with 1st row as total
-   * @param year
-   * @return
-   * @throws Exception 
-   */
-  public String[][] dateRangeResult(int year, int month, int day, int endMonth, int endDay) throws Exception{
-    ArrayList<Farm.Details> list = farm.dateRange(year, month, day, endMonth, endDay);
-    String[][] matrix = new String[list.size() + 1][2];
-    int total = 0;
-    for(int i = 0; i < matrix.length; i++)
-    {
-      if(i == 0)
-      {
-        matrix[i][0] = "Total";        
-        for(int j = 0; j < list.size(); j++)
-        {
-          total += list.get(j).getMilkWeight();
-        }
-        matrix[0][1] = Integer.toString(total);
-        continue;
-      }      
-      matrix[i][0] = list.get(i-1).getFarmID();      
-      double percent = list.get(i-1).getMilkWeight() / (double)total * 100;
-      matrix[i][1] = df.format(percent) + "%";
-    }
-    
-    return matrix;
-  }
 
-  
-  
+	private final static String[] MONTHS_OF_YEAR = {"January", "February", "March", "April", "May",  //Stores month of years as numbers
+			"June", "July", "August", "September", "October", "November", "December"};
+
+	DecimalFormat df = new DecimalFormat("#.00");
+	Farm farm;
+
+	public DisplayStats(Farm farm) {
+		this.farm = farm;
+	}
+
+	/**
+	 * returns total and percent total of each month for FarmReport as a 2D matrix with 1st row as total
+	 * @param farmID
+	 * @param year
+	 * @return
+	 * @throws Exception 
+	 */
+	public ArrayList<String> farmReportResult(String farmID, String year) throws Exception{    
+		ArrayList<Farm.Details> list = farm.farmReport(farmID, year);
+		ArrayList<String> percentArray = new ArrayList<String>();
+		int total = 0;
+
+		//Traverse through list to get total sum
+		for (int j = 0; j < list.size(); j++) {
+			total += list.get(j).getMilkWeight();
+		}
+		//Compute each months percent of the total
+		for (int i = 0; i < list.size(); i++) {       
+			double percent = list.get(i).getMilkWeight() / (double)total * 100;
+			percentArray.add(df.format(percent) + "%");
+		} 
+
+		return percentArray;
+	}
+
+	/**
+	 * returns total and percent total of each farm for AnnualReport as a 2D matrix with 1st row as total
+	 * @param year
+	 * @return
+	 * @throws Exception 
+	 */
+	public ArrayList<String> annualReportResult(String year) throws Exception{    
+		ArrayList<Farm.Details> list = farm.annualReport(year);
+		ArrayList<String> percentArray = new ArrayList<String>();
+		int total = 0;
+
+		//Traverse through list to get total sum
+		for (int j = 0; j < list.size(); j++) {
+			total += list.get(j).getMilkWeight();
+		}
+		//Compute each farms percent of the total
+		for (int i = 0; i < list.size(); i++) {       
+			double percent = list.get(i).getMilkWeight() / (double)total * 100;
+			percentArray.add(df.format(percent) + "%");
+		} 
+
+		return percentArray;
+	}
+
+	/**
+	 * returns total and percent total of each farm for Monthly Report as a 2D matrix with 1st row as total
+	 * @param month
+	 * @param year
+	 * @return
+	 * @throws Exception 
+	 */
+	public ArrayList<String> monthlyReportResult(int month, int year) throws Exception{
+		ArrayList<Farm.Details> list = farm.monthlyReport(month, year);   
+		ArrayList<String> percentArray = new ArrayList<String>();
+		int total = 0;
+
+		//Traverse through list to get total sum
+		for (int j = 0; j < list.size(); j++) {
+			total += list.get(j).getMilkWeight();
+		}
+		//Compute each farms percent of the total
+		for (int i = 0; i < list.size(); i++) {       
+			double percent = list.get(i).getMilkWeight() / (double)total * 100;
+			percentArray.add(df.format(percent) + "%");
+		} 
+
+		return percentArray;
+	}
+
+	/**
+	 * returns total and percent total of each farm for Date-Range Report as a 2D matrix with 1st row as total
+	 * @param year
+	 * @return
+	 * @throws Exception 
+	 */
+	public ArrayList<String> dateRangeResult(int year, int month, int day, int endMonth, int endDay) throws Exception{
+		ArrayList<Farm.Details> list = farm.dateRange(year, month, day, endMonth, endDay);
+		ArrayList<String> percentArray = new ArrayList<String>();
+		int total = 0;
+
+		//Traverse through list to get total sum
+		for (int j = 0; j < list.size(); j++) {
+			total += list.get(j).getMilkWeight();
+		}
+		//Compute each entries percent of the total
+		for (int i = 0; i < list.size(); i++) {       
+			double percent = list.get(i).getMilkWeight() / (double)total * 100;
+			percentArray.add(df.format(percent) + "%");
+		} 
+
+		return percentArray;
+	}
 }
