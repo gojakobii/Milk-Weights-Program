@@ -139,78 +139,6 @@ public class Main extends Application {
 		}
 	}
 
-	//	public void addEditSetup(String change, TextArea fileOutput) {
-	//		Stage newWindow = new Stage();
-	//		GridPane gPane = new GridPane();
-	//
-	//		gPane.add(new Label("Enter year: "), 0, 0);
-	//		gPane.add(new TextField(), 1, 0);
-	//		gPane.add(new Label("Enter month: "), 0, 1);
-	//		gPane.add(new TextField(), 1, 1);
-	//		gPane.add(new Label("Enter day: "), 0, 2);
-	//		gPane.add(new TextField(), 1, 2);
-	//		gPane.add(new Label("Enter farm: "), 0, 3);
-	//		gPane.add(new TextField(), 1, 3);
-	//		gPane.add(new Label("Enter weight: "), 0, 4);
-	//		gPane.add(new TextField(), 1, 4);
-	//
-	//		gPane.setVgap(4);
-	//		gPane.setHgap(10);
-	//		gPane.setPadding(new Insets(5, 5, 5, 5));
-	//
-	//		Scene secondScene = new Scene(gPane, 330, 190);
-	//
-	//		Button submit = new Button("Submit!");
-	//		submit.setOnAction(new EventHandler<ActionEvent>() {
-	//			public void handle(ActionEvent event) {
-	//				newWindow.hide();
-	//				fileOutput.setText(change); 
-	//			}
-	//		});
-	//		gPane.add(submit, 0, 5);
-	//
-	//		// New window (Stage)
-	//		newWindow.setTitle(change);
-	//		newWindow.setScene(secondScene);
-	//		newWindow.show();
-	//	}
-
-	//	public void removeSetup(String change, TextArea fileOutput) {
-	//		Stage newWindow = new Stage();
-	//		GridPane gPane = new GridPane();
-	//
-	//		gPane.add(new Label("Enter year: "), 0, 0);
-	//		gPane.add(new TextField(), 1, 0);
-	//		gPane.add(new Label("Enter month: "), 0, 1);
-	//		gPane.add(new TextField(), 1, 1);
-	//		gPane.add(new Label("Enter day: "), 0, 2);
-	//		gPane.add(new TextField(), 1, 2);
-	//		gPane.add(new Label("Enter farm: "), 0, 3);
-	//		gPane.add(new TextField(), 1, 3);
-	//
-	//		gPane.setVgap(4);
-	//		gPane.setHgap(10);
-	//		gPane.setPadding(new Insets(5, 5, 5, 5));
-	//
-	//		Scene secondScene = new Scene(gPane, 330, 125);
-	//
-	//		Button submit = new Button("Submit!");
-	//		submit.setOnAction(new EventHandler<ActionEvent>() {
-	//			public void handle(ActionEvent event) {
-	//				// VERIFY DATA IS ENTERED CORRECTLY BEFORE PROCEEDING
-	//				// (I.E FILE EXISTS, FILE PARSES CORRECTLY, VALID ENTRIES IN TEXT FIELDS)
-	//				newWindow.hide();
-	//				fileOutput.setText(change); //CHANGE WITH REMOVE
-	//			}
-	//		});
-	//		gPane.add(submit, 0, 5);
-	//
-	//		// New window (Stage)
-	//		newWindow.setTitle(change);
-	//		newWindow.setScene(secondScene);
-	//		newWindow.show();
-	//	}
-
 	/**
 	 * Parses user supplied path name and loads all data into Farm object
 	 * 
@@ -222,11 +150,9 @@ public class Main extends Application {
 		try {
 			this.farm = fm.loadFileOrFolder(pathName);
 		} catch (Exception e) {
-			e.printStackTrace();
 			throw new Exception(); //to be dealt with elsewhere in the form of an Error alert
 		}
 	}
-	
 
 	/**
 	 * Given a user-inputted month (e.g. "5" or "may"), returns the correct month in the "MM" format (e.g. "05") that
@@ -287,7 +213,7 @@ public class Main extends Application {
 
 				reportTotal = dStats.farmReportResult(farmid, year);
 				displayFarms = farm.farmReport(farmid, year);
-				
+
 				//Exception checking
 				for (int i = 0; i < displayFarms.size(); i++) {
 					if (displayFarms.get(i).getFarmID().equals(farmid)) {
@@ -300,7 +226,7 @@ public class Main extends Application {
 				if (!check) {
 					throw new Exception(); //invalid user data
 				}
-				
+
 				isFarmReport = true;
 			} else if (report.equals("Monthly Report")) {
 				String monthStr = fixMonth(keys.get(0));
@@ -310,7 +236,7 @@ public class Main extends Application {
 
 				reportTotal = dStats.monthlyReportResult(month, year);
 				displayFarms = farm.monthlyReport(month, year);
-				
+
 				for (int i = 0; i < displayFarms.size(); i++) {
 					if (farm.getValues(new Date(month, 1, year)).get(i) != null) { //placeholder date
 						check = true;
@@ -320,14 +246,14 @@ public class Main extends Application {
 				if (!check) {
 					throw new Exception(); //invalid user data
 				}
-				
+
 				tableMonth = Integer.toString(month);
 			} else if (report.equals("Annual Report")) {
 				String year = keys.get(0);
 
 				reportTotal = dStats.annualReportResult(year);
 				displayFarms = farm.annualReport(year);
-				
+
 				for (int i = 0; i < displayFarms.size(); i++) {
 					if (farm.getValues(new Date(1, 1, Integer.parseInt(year))).get(i) != null) { //placeholder date
 						check = true;
@@ -352,7 +278,7 @@ public class Main extends Application {
 
 				reportTotal = dStats.dateRangeResult(year, startMonth, startDay, endMonth, endDay);
 				displayFarms = farm.dateRange(year, startMonth, startDay, endMonth, endDay);
-				
+
 				for (int i = 0; i < displayFarms.size(); i++) {
 					if (farm.getValues(new Date(startMonth, startDay, year)).get(i) != null) {
 						check = true;
@@ -455,7 +381,7 @@ public class Main extends Application {
 				try {
 					fm.save(farm, "output");
 				} catch (Exception e) {
-					Alert warning = new Alert(AlertType.ERROR, "Something went wrong trying to write to the file");
+					Alert warning = new Alert(AlertType.ERROR, "Something went wrong trying to write to the file!");
 					warning.show();
 				}
 			}
@@ -547,7 +473,6 @@ public class Main extends Application {
 						displayReport(select, variables); //display that report
 					} catch (Exception e) {
 						//Alerts the user that an Exception was thrown
-						e.printStackTrace();
 						Alert warning = new Alert(AlertType.ERROR, "Something went wrong! "
 								+ "Check that you've entered a valid file name and input valid information intended for "
 								+ "computation.");
@@ -611,138 +536,17 @@ public class Main extends Application {
 				Alert confirm = new Alert(AlertType.WARNING, "This is for display purposes "
 						+ "only and cannot yet accurately perform computations.");
 				confirm.show();
-				//				VBox displayButtons = new VBox();
-				//				Stage newWindow = new Stage();
-				//
-				//				Button statMonth = new Button("Display statistics by month");
-				//				statMonth.setTextAlignment(TextAlignment.CENTER);
-				//				statMonth.setOnAction(new EventHandler<ActionEvent>() {
-				//					public void handle(ActionEvent event) {
-				//						newWindow.hide();
-				//						Stage newWindow2 = new Stage();
-				//
-				//						GridPane monthGrid = new GridPane();
-				//
-				//						monthGrid.setVgap(4);
-				//						monthGrid.setHgap(10);
-				//						monthGrid.setPadding(new Insets(5, 5, 5, 5));
-				//						monthGrid.add(new Label("Display statistics by month"), 0, 0, 2, 1);
-				//						monthGrid.add(new Label("Enter farm: "), 0, 1);
-				//						monthGrid.add(new TextField(), 0, 2);
-				//						monthGrid.add(new Label("Enter year: "), 1, 1);
-				//						monthGrid.add(new TextField(), 1, 2);
-				//
-				//						Scene secondScene = new Scene(monthGrid, 300, 100);
-				//
-				//						Button submit = new Button("Submit!");
-				//						submit.setOnAction(new EventHandler<ActionEvent>() {
-				//							public void handle(ActionEvent event) {
-				//								// VERIFY DATA IS ENTERED CORRECTLY BEFORE PROCEEDING
-				//								// (I.E FILE EXISTS, FILE PARSES CORRECTLY, VALID ENTRIES IN TEXT FIELDS)
-				//								newWindow2.hide();
-				//								fileOutput.setText("DISPLAY MONTH STATS"); //CHANGE WITH ACTUAL MONTHLY STATS CODE
-				//							}
-				//						});
-				//						monthGrid.add(submit, 0, 5);
-				//
-				//						// New window (Stage)
-				//						newWindow2.setTitle("Display");
-				//						newWindow2.setScene(secondScene);
-				//						newWindow2.show();
-				//					}
-				//				});
-				//
-				//				Button statFarm = new Button("Display statistics by farm");
-				//				statFarm.setOnAction(new EventHandler<ActionEvent>() {
-				//					public void handle(ActionEvent event) {
-				//						newWindow.hide();
-				//						Stage newWindow2 = new Stage();
-				//						GridPane farmGrid = new GridPane();
-				//
-				//						farmGrid.setVgap(4);
-				//						farmGrid.setHgap(10);
-				//						farmGrid.setPadding(new Insets(5, 5, 5, 5));
-				//						farmGrid.add(new Label("Display statistics by farm"), 0, 0, 2, 1);
-				//						farmGrid.add(new Label("Enter month: "), 0, 1);
-				//						farmGrid.add(new TextField(), 0, 2);
-				//						farmGrid.add(new Label("Enter year: "), 1, 1);
-				//						farmGrid.add(new TextField(), 1, 2);
-				//
-				//						Scene secondScene = new Scene(farmGrid, 300, 100);
-				//
-				//						Button submit = new Button("Submit!");
-				//						submit.setOnAction(new EventHandler<ActionEvent>() {
-				//							public void handle(ActionEvent event) {
-				//								// VERIFY DATA IS ENTERED CORRECTLY BEFORE PROCEEDING
-				//								// (I.E FILE EXISTS, FILE PARSES CORRECTLY, VALID ENTRIES IN TEXT FIELDS)
-				//								newWindow2.hide();
-				//								fileOutput.setText("DISPLAY FARM STATS"); //CHANGE WITH ACTUAL FARM STATS CODE
-				//							}
-				//						});
-				//						farmGrid.add(submit, 0, 5);
-				//
-				//						// New window (Stage)
-				//						newWindow2.setScene(secondScene);
-				//						newWindow2.show();
-				//					}
-				//				});
-				//				statFarm.setTextAlignment(TextAlignment.CENTER);
-				//
-				//				Button farmShares = new Button("Display farm shares");
-				//				farmShares.setOnAction(new EventHandler<ActionEvent>() {
-				//					public void handle(ActionEvent event) {
-				//						newWindow.hide();
-				//						Stage newWindow2 = new Stage();
-				//						GridPane shareGrid = new GridPane();
-				//
-				//						shareGrid.setVgap(4);
-				//						shareGrid.setHgap(10);
-				//						shareGrid.setPadding(new Insets(5, 5, 5, 5));
-				//						shareGrid.add(new Label("Display farm shares"), 0, 0, 2, 1);
-				//						shareGrid.add(new Label("Enter month: "), 0, 1);
-				//						shareGrid.add(new TextField(), 0, 2);
-				//						shareGrid.add(new Label("Enter year: "), 1, 1);
-				//						shareGrid.add(new TextField(), 1, 2);
-				//
-				//						Scene secondScene = new Scene(shareGrid, 300, 100);
-				//
-				//						Button submit = new Button("Submit!");
-				//						submit.setOnAction(new EventHandler<ActionEvent>() {
-				//							public void handle(ActionEvent event) {
-				//								// VERIFY DATA IS ENTERED CORRECTLY BEFORE PROCEEDING
-				//								// (I.E FILE EXISTS, FILE PARSES CORRECTLY, VALID ENTRIES IN TEXT FIELDS)
-				//								newWindow2.hide();
-				//								fileOutput.setText("DISPLAY FARM SHARES"); //CHANGE WITH ACTUAL FARM SHARES CODE
-				//							}
-				//						});
-				//						shareGrid.add(submit, 0, 5);
-				//
-				//						// New window (Stage)
-				//						newWindow2.setScene(secondScene);
-				//						newWindow2.show();
-				//					}
-				//				});
-				//				farmShares.setTextAlignment(TextAlignment.CENTER);
-				//
-				//				displayButtons.setPadding(new Insets(5, 5, 5, 5));
-				//				displayButtons.getChildren().addAll(statMonth, statFarm, farmShares);
-				//				displayButtons.setAlignment(Pos.CENTER);
-				//				Scene secondScene = new Scene(displayButtons, 200, 85);
-				//
-				//				// New window (Stage)
-				//				newWindow.setScene(secondScene);
-				//				newWindow.show();
 			}
 		});
 		display.getOnMouseClicked();
-		
+
 		Image image = new Image("cow.png");
 		ImageView iv1 = new ImageView();
 		iv1.setImage(image);
 		iv1.setFitWidth(100);
-        iv1.setPreserveRatio(true);
-        iv1.setSmooth(true);
-        iv1.setCache(true);
+		iv1.setPreserveRatio(true);
+		iv1.setSmooth(true);
+		iv1.setCache(true);
 
 		//Adding to GridPane
 		GridPane mainGrid = new GridPane();
