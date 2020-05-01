@@ -1,5 +1,6 @@
 package application;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,6 +48,7 @@ public class Main extends Application {
 	private Farm farm; //global Farm object to be operated on
 	private ArrayList<Details> displayFarms; //global displayFarms object to be operated on
 	private TableView table = new TableView(); //global TableView for inputting report data
+	private FileManager fm = new FileManager(); //global FileManager for reading and outputing data
 
 	/**
 	 * Inner class to format data with TableView
@@ -218,9 +220,9 @@ public class Main extends Application {
 	 */
 	private void parse(String pathName) throws Exception {
 		try {
-			FileManager fm = new FileManager();
 			this.farm = fm.loadFileOrFolder(pathName);
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new Exception(); //to be dealt with elsewhere in the form of an Error alert
 		}
 	}
@@ -450,7 +452,12 @@ public class Main extends Application {
 		write.setAlignment(Pos.BASELINE_LEFT);
 		write.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent event) {
-				// WRITE CODE
+				try {
+					fm.save(farm, "output");
+				} catch (Exception e) {
+					Alert warning = new Alert(AlertType.ERROR, "Something went wrong trying to write to the file");
+					warning.show();
+				}
 			}
 		});
 
@@ -540,6 +547,7 @@ public class Main extends Application {
 						displayReport(select, variables); //display that report
 					} catch (Exception e) {
 						//Alerts the user that an Exception was thrown
+						e.printStackTrace();
 						Alert warning = new Alert(AlertType.ERROR, "Something went wrong! "
 								+ "Check that you've entered a valid file name and input valid information intended for "
 								+ "computation.");
