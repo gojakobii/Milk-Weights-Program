@@ -12,9 +12,9 @@ Team Members:
 
  
 
-Which team members were on same xteam together?
+Which team members were on the same xteam together?
 Abhinav Bipin and Shashank Agrawal
 
 Other notes or comments to the grader:
 (Description)
-Our milkweights program will interact the user to prompt what kind of report the user desire. Once selected, depending on the report type, the user will be prompted for more specific information to display. Once the data is displayed, the user will have the option to add, remove, or edit the data. They will also have an option to change the type of report. THis will all be done through JavaFX. 
+Our MilkWeights program interacts with the user to prompt what kind of report the user desires. Once selected, depending on the report type, the user will be prompted for more specific information to display. There are buttons included to show instructions, write an output file, and to close the program. The add, edit, remove, and display buttons do not accurately perform computations yet and are included solely for show. This will all be achieved through JavaFX. 
